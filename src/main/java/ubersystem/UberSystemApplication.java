@@ -1,4 +1,4 @@
-package com.example.ubersystem;
+package ubersystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
