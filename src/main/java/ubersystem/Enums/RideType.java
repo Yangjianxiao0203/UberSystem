@@ -1,7 +1,7 @@
 package ubersystem.Enums;
 
 public enum RideType {
-    Ecnonomy,
+    Economy,
     Comfort,
     Luxury
 }
