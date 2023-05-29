@@ -54,4 +54,14 @@ public class RideController {
             return new Result<>(500, "Failed to pick up ride", null);
         }
     }
+
+    @PostMapping("/rides/{id}/arrive")
+    public Result<String> arriveAtDestination(@PathVariable Long id, @RequestBody LocalDateTimeWrapper arrivalTime) {
+        boolean isArrived = rideService.arriveAtDestination(id, arrivalTime.getLocalDateTime());
+        if (isArrived) {
+            return new Result<>(200, "Ride arrived successfully", "Ride ID: " + id);
+        } else {
+            return new Result<>(500, "Failed to arrive at destination", null);
+        }
+    }
 }

@@ -39,4 +39,11 @@ public class RideServiceImpl implements RideService {
     public boolean pickUpPassenger(Long rideId, LocalDateTime pickUpTime) {
         return rideMapper.pickUpPassenger(rideId, pickUpTime)>0;
     }
+
+    @Override
+    public boolean arriveAtDestination(Long rideId, LocalDateTime arrivalTime) {
+        int rows = rideMapper.arriveAtDestination(rideId, arrivalTime);
+        return rows > 0;
+    }
+
 }

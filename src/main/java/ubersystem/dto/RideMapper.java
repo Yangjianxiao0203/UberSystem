@@ -1,7 +1,6 @@
 package ubersystem.dto;
 
 import org.apache.ibatis.annotations.*;
-import org.apache.ibatis.annotations.Mapper;
 import ubersystem.pojo.Ride;
 
 import java.time.LocalDateTime;
@@ -22,4 +21,10 @@ public interface RideMapper {
     @Update("UPDATE ride SET status = 'PickedUpPassenger', pick_up_time = #{pickUpTime} WHERE id = #{rideId}")
     int pickUpPassenger(@Param("rideId") Long rideId, @Param("pickUpTime") LocalDateTime pickUpTime);
 
+    @Update("UPDATE ride SET status = 'Arrived', arrival_time = #{arrivalTime} WHERE id = #{rideId}")
+    int arriveAtDestination(@Param("rideId") Long rideId, @Param("arrivalTime") LocalDateTime arrivalTime);
+
+
+    @Select("SELECT * FROM ride WHERE id = #{rideId}")
+    Ride getRideById(@Param("rideId") Long rideId);
 }
