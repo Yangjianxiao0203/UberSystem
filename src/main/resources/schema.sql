@@ -45,19 +45,40 @@ CREATE TABLE IF NOT EXISTS `ride` (
                         `ride_review` TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `order`;
 CREATE TABLE IF NOT EXISTS `order` (
                          `id` BIGINT NOT NULL AUTO_INCREMENT,
-                         `rideId` BIGINT NOT NULL,
-                         `creationTime` DATETIME NOT NULL,
-                         `totalCost` DOUBLE,
-                         `baseCost` DOUBLE,
-                         `rideAndFuelCost` DOUBLE,
-                         `timeCost` DOUBLE,
-                         `specialLocationServiceCost` DOUBLE,
-                         `dynamicCost` DOUBLE,
+                         `ride_id` BIGINT NOT NULL,
+                         `creation_time` DATETIME NOT NULL,
+                         `total_cost` DOUBLE,
+                         `base_cost` DOUBLE,
+                         `ride_and_fuel_cost` DOUBLE,
+                         `time_cost` DOUBLE,
+                         `special_location_servicecost` DOUBLE,
+                         `dynamic_cost` DOUBLE,
                          `status` ENUM('Unpaid', 'PaidOrderComplete', 'RefundProcessing', 'Refunded') NOT NULL,
-                         `paymentPlatform` VARCHAR(255),
-                         `paymentPlatformSerialNumber` VARCHAR(255),
-                         `paymentResultFromPlatform` VARCHAR(255),
+                         `payment_platform` VARCHAR(255),
+                         `payment_platform_serial_number` VARCHAR(255),
+                         `payment_result_from_platform` VARCHAR(255),
+                         FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`),
                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `coordinate` (
+                                            `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                            `longitude` DOUBLE,
+                                            `latitude` DOUBLE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `track` (
+                                       `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                       `ride_id` BIGINT,
+                                       `time_sequence` DATETIME,
+                                       `coordinate_id` BIGINT,
+                                       `speed_track` DOUBLE,
+                                       `altitude` DOUBLE,
+                                       FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`),
+                                       FOREIGN KEY (`coordinate_id`) REFERENCES `coordinate`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
