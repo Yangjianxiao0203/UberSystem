@@ -1,4 +1,4 @@
-package ubersystem.dto;
+package ubersystem.mapper;
 
 import org.apache.ibatis.annotations.*;
 import ubersystem.pojo.Track;

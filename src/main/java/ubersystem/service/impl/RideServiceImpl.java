@@ -2,7 +2,7 @@ package ubersystem.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ubersystem.dto.RideMapper;
+import ubersystem.mapper.RideMapper;
 import ubersystem.pojo.Ride;
 import ubersystem.service.RideService;
 

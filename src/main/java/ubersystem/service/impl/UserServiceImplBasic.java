@@ -3,7 +3,7 @@ package ubersystem.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ubersystem.Enums.LogLevel;
-import ubersystem.dto.UserMapper;
+import ubersystem.mapper.UserMapper;
 import ubersystem.pojo.User;
 import ubersystem.service.LogService;
 import ubersystem.service.UserService;
