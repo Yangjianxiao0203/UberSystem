@@ -2,6 +2,7 @@ package ubersystem.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ubersystem.mapper.RideMapper;
 import ubersystem.pojo.Ride;
 import ubersystem.service.RideService;
@@ -17,9 +18,11 @@ public class RideServiceImpl implements RideService {
         this.rideMapper = rideMapper;
     }
 
+    @Transactional
     @Override
     public Ride createRide(Ride ride) {
         rideMapper.createRide(ride);
+        // publish it to mqtt ride broker
         return ride;
     }
 
