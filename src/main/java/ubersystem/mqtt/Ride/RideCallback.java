@@ -32,6 +32,17 @@ public class RideCallback implements MqttCallbackExtended {
         }
     }
 
+    /**
+     *
+     messageArrived(String topic, MqttMessage message) 方法在订阅的主题收到消息时触发。
+     当 MQTT 代理接收到发布的消息，并且订阅者订阅了该主题时，将调用此方法。
+     topic参数表示收到消息的主题，mqttMessage参数表示接收到的 MQTT 消息对象。
+
+     deliveryComplete(IMqttDeliveryToken token) 方法在成功发布消息后触发。
+     当客户端成功将消息发布到 MQTT 代理时，将调用此方法。您可以在该方法中执行必要的逻辑，例如记录日志或处理发布完成事件。
+     token参数表示发布的消息的传递令牌，可以用于获取有关消息传递状态的详细信息。
+     */
+
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
         log.info("Ride message received: {}", mqttMessage);
