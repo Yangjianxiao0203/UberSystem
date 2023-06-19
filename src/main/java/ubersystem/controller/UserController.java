@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ubersystem.Result.ResponseStatus;
 import ubersystem.Result.Result;
 import ubersystem.pojo.User;
 import ubersystem.service.UserService;
@@ -21,8 +22,8 @@ public class UserController {
     public Result<User> registerUser(@RequestBody User user) {
         boolean isSucceed = userService.registerUser(user);
         if (!isSucceed) {
-            return new Result<>(400, "user register failed", null);
+            return new Result<>(ResponseStatus.CLIENT_ERROR.getCode(), "user register failed", null);
         }
-        return new Result<>(200, "user register success", user);
+        return new Result<>(ResponseStatus.SUCCESS.getCode(), "user register success", user);
     }
 }
