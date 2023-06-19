@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ubersystem.pojo.Result;
+import ubersystem.Result.Result;
 import ubersystem.pojo.User;
 import ubersystem.service.UserService;
 

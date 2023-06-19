@@ -2,8 +2,9 @@ package ubersystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ubersystem.Result.ResponseStatus;
 import ubersystem.pojo.LocalDateTimeWrapper;
-import ubersystem.pojo.Result;
+import ubersystem.Result.Result;
 import ubersystem.pojo.Ride;
 import ubersystem.service.RideService;
 
@@ -20,9 +21,9 @@ public class RideController {
     public Result<Ride> createRide(@RequestBody Ride ride) {
         Ride createdRide=rideService.createRide(ride);
         if (createdRide != null) {
-            return new Result<>(200, "Ride created successfully", createdRide);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride created successfully", createdRide);
         } else {
-            return new Result<>(500, "Failed to create ride", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to create ride", null);
         }
     }
 
@@ -30,18 +31,18 @@ public class RideController {
     public Result<String> cancelRide(@PathVariable("rideId") Long rideId) {
         boolean isCanceled = rideService.cancelRide(rideId, LocalDateTime.now());
         if (isCanceled) {
-            return new Result<>(200, "Ride canceled successfully", "RideId: "+rideId);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride canceled successfully", "RideId: "+rideId);
         } else {
-            return new Result<>(500, "Failed to cancel ride", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to cancel ride", null);
         }
     }
 
     @PutMapping("/accept/{rideId}")
     public Result<String> driverAcceptRide(@PathVariable("rideId") Long rideId, @RequestParam("driverUid") Long driverUid) {
         if (rideService.driverAcceptRide(rideId, driverUid,LocalDateTime.now())) {
-            return new Result<>(200, "Ride accepted by driver successfully", "Ride ID: " + rideId + ", Driver ID: " + driverUid);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride accepted by driver successfully", "Ride ID: " + rideId + ", Driver ID: " + driverUid);
         } else {
-            return new Result<>(500, "Failed to accept ride", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to accept ride", null);
         }
     }
 
@@ -49,9 +50,9 @@ public class RideController {
     public Result<String> pickUpPassenger(@PathVariable Long id, @RequestBody LocalDateTimeWrapper pickUpTime) {
         boolean isPicked = rideService.pickUpPassenger(id, pickUpTime.getLocalDateTime());
         if (isPicked) {
-            return new Result<>(200, "Ride picked up successfully", "Ride ID: " + id);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride picked up successfully", "Ride ID: " + id);
         } else {
-            return new Result<>(500, "Failed to pick up ride", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to pick up ride", null);
         }
     }
 
@@ -59,9 +60,9 @@ public class RideController {
     public Result<String> arriveAtDestination(@PathVariable Long id, @RequestBody LocalDateTimeWrapper arrivalTime) {
         boolean isArrived = rideService.arriveAtDestination(id, arrivalTime.getLocalDateTime());
         if (isArrived) {
-            return new Result<>(200, "Ride arrived successfully", "Ride ID: " + id);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride arrived successfully", "Ride ID: " + id);
         } else {
-            return new Result<>(500, "Failed to arrive at destination", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to arrive at destination", null);
         }
     }
 }

@@ -1,4 +1,4 @@
-package ubersystem.pojo;
+package ubersystem.Result;
 
 import lombok.Data;
 
