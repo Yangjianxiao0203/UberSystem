@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @Slf4j
 public class RideConfig {
-    private String host="tcp://localhost:1883";
+    private String host="ws://localhost:8083";
     private String clientId="ride-backend";
     private String userName="Ride";
     private String password="distinctive0930";

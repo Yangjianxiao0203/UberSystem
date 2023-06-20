@@ -21,9 +21,9 @@ public class RideController {
     public Result<Ride> createRide(@RequestBody Ride ride) {
         Ride createdRide=rideService.createRide(ride);
         if (createdRide != null) {
-            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride created successfully", createdRide);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), ResponseStatus.SUCCESS.getMessage(), createdRide);
         } else {
-            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to create ride", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), ResponseStatus.FAILURE.getMessage(), null);
         }
     }
 
@@ -31,9 +31,9 @@ public class RideController {
     public Result<String> cancelRide(@PathVariable("rideId") Long rideId) {
         boolean isCanceled = rideService.cancelRide(rideId, LocalDateTime.now());
         if (isCanceled) {
-            return new Result<>(ResponseStatus.SUCCESS.getCode(), "Ride canceled successfully", "RideId: "+rideId);
+            return new Result<>(ResponseStatus.SUCCESS.getCode(), ResponseStatus.SUCCESS.getMessage(), "RideId: "+rideId);
         } else {
-            return new Result<>(ResponseStatus.FAILURE.getCode(), "Failed to cancel ride", null);
+            return new Result<>(ResponseStatus.FAILURE.getCode(), ResponseStatus.FAILURE.getMessage(), null);
         }
     }
 

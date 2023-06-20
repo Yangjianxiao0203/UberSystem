@@ -3,7 +3,7 @@ package ubersystem.Result;
 public enum ResponseStatus {
     SUCCESS(200, "Operation successful"),
     CLIENT_ERROR(400, "Client error"),
-    FAILURE(500, "Operation failed");
+    FAILURE(500, "Server failed");
 
     private final int code;
     private final String message;
