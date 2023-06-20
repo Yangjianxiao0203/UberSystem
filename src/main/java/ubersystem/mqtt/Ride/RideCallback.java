@@ -7,6 +7,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import ubersystem.mqtt.MessageHandler;
 
 @Component
 @Slf4j
@@ -15,6 +16,9 @@ public class RideCallback implements MqttCallbackExtended {
     @Autowired
     @Lazy
     RideClient rideClient;
+
+    @Autowired
+    RideMessageHandler messageHandler;
 
     @Override
     public void connectComplete(boolean b, String s) {
@@ -45,7 +49,7 @@ public class RideCallback implements MqttCallbackExtended {
 
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-        log.info("Ride message received: {}", mqttMessage);
+        messageHandler.handle(s, mqttMessage);
 
     }
 

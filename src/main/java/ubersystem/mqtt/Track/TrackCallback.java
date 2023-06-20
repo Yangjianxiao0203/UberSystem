@@ -1,4 +1,4 @@
-package ubersystem.mqtt;
+package ubersystem.mqtt.Track;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -10,33 +10,36 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
-@Data
 @Slf4j
-public class MqttSendCallback implements MqttCallbackExtended {
+@Data
+public class TrackCallback implements MqttCallbackExtended {
 
     @Autowired
     @Lazy
-    MqttSendClient mqttSendClient;
+    TrackClient trackClient;
+
+    @Autowired
+    TrackMessageHandler messageHandler;
 
     @Override
     public void connectComplete(boolean b, String s) {
-        log.info("MQTT Send Client connection completed: {}", s);
-        log.info("client: {}", MqttSendClient.getClient().getClientId());
+        log.info("Track Client connection completed: {}", s);
+        log.info("client: {}", TrackClient.getClient().getClientId());
     }
 
     @Override
     public void connectionLost(Throwable throwable) {
-        log.info("MQTT connection lost: {}", throwable.getMessage());
+        log.info("Track connection lost: {}", throwable.getMessage());
 
         log.info("reconnecting...");
-        if(MqttAcceptClient.client==null) {
-            mqttSendClient.reconnect();
+        if(TrackClient.client==null) {
+            trackClient.reconnect();
         }
     }
 
     @Override
     public void messageArrived(String s, MqttMessage mqttMessage) throws Exception {
-        log.info("MQTT message received: {}", mqttMessage);
+        messageHandler.handle(s, mqttMessage);
     }
 
     @Override

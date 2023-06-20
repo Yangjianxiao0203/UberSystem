@@ -1,4 +1,4 @@
-package ubersystem.mqtt.Ride;
+package ubersystem.mqtt.Track;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -9,60 +9,61 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ubersystem.mqtt.Ride.RideClient;
 
 @Component
 @Data
 @Slf4j
-public class RideClient {
+public class TrackClient {
     public static MqttClient client;
-
     public static MqttClient getClient() {
         return client;
     }
 
     public static void setClient(MqttClient client) {
-        RideClient.client = client;
+        TrackClient.client = client;
     }
 
     @Autowired
-    private RideConfig rideConfig;
+    private TrackConfig trackConfig;
 
     @Autowired
-    private RideCallback rideCallback;
+    private TrackCallback trackCallback;
 
     public void connect() {
         MqttClient client;
         try {
-            client =new MqttClient(rideConfig.getHost(), rideConfig.getClientId(), new MemoryPersistence());
+            client =new MqttClient(trackConfig.getHost(), trackConfig.getClientId(), new MemoryPersistence());
             MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(rideConfig.isCleanSession());
-            options.setUserName(rideConfig.getUserName());
-            options.setPassword(rideConfig.getPassword().toCharArray());
-            options.setConnectionTimeout(rideConfig.getTimeout());
-            options.setKeepAliveInterval(rideConfig.getKeepAlive());
+            options.setCleanSession(trackConfig.isCleanSession());
+            options.setUserName(trackConfig.getUserName());
+            options.setPassword(trackConfig.getPassword().toCharArray());
+            options.setConnectionTimeout(trackConfig.getTimeout());
+            options.setKeepAliveInterval(trackConfig.getKeepAlive());
             try {
-                client.setCallback(rideCallback);
+                client.setCallback(trackCallback);
                 client.connect(options);
-                RideClient.setClient(client);
-                log.info("Ride Connection established");
+                TrackClient.setClient(client);
+                log.info("Track Connection established");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void subscribe() {
-        log.info("ride client start to subscribe topics");
+        log.info("track client start to subscribe topics");
         try {
-            int qos = rideConfig.getQos();
-            for(String channel: rideConfig.getChannels()) {
+            int qos = trackConfig.getQos();
+            for(String channel: trackConfig.getChannels()) {
                 client.subscribe(channel, qos);
-//                log.info("subscribed to topic: {}, qos: {}" ,channel,qos);
             }
-            log.info("ride client subscribed process finished");
-        } catch (MqttException e) {
+            log.info("track client subscribe topics success");
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -74,16 +75,13 @@ public class RideClient {
             e.printStackTrace();
         }
     }
+
     public void unsubscribe() {
-        log.info("Ride client start to unsubscribe from topics");
         try {
-            for (String channel : rideConfig.getChannels()) {
-                if(client.getTopic(channel)==null) {continue;}
+            for(String channel: trackConfig.getChannels()) {
                 client.unsubscribe(channel);
-                log.info("Unsubscribed from topic: " + channel);
             }
-            log.info("Ride client unsubscribe process finished");
-        } catch (MqttException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -91,12 +89,11 @@ public class RideClient {
     public void publish(String topic, String messageContent) {
         try {
             MqttMessage message = new MqttMessage(messageContent.getBytes());
-            message.setQos(rideConfig.getQos());
+            message.setQos(trackConfig.getQos());
             client.publish(topic, message);
             log.info("Published message to topic: {}", topic);
         } catch (MqttException e) {
             log.error("Error publishing message to MQTT broker", e);
         }
     }
-
 }
