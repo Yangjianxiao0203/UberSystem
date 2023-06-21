@@ -16,7 +16,9 @@ public class Track {
     private Long id;
     private Long rideId;
     private LocalDateTime timeSequence;
-    private Coordinate coordinate;
+//    private Coordinate coordinate;
+    private String mqttChannelName;
+    private String coordinate;
     private Double speedTrack;
     private Double altitude;
 }

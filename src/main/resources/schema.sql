@@ -70,15 +70,15 @@ CREATE TABLE IF NOT EXISTS `coordinate` (
                                             `latitude` DOUBLE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
+DROP TABLE track;
 CREATE TABLE IF NOT EXISTS `track` (
                                        `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
                                        `ride_id` BIGINT,
                                        `time_sequence` DATETIME,
-                                       `coordinate_id` BIGINT,
+                                       `mqtt_channel_name` VARCHAR(255),
+                                       `coordinate` varchar(255),
                                        `speed_track` DOUBLE,
                                        `altitude` DOUBLE,
-                                       FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`),
-                                       FOREIGN KEY (`coordinate_id`) REFERENCES `coordinate`(`id`)
+                                       FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

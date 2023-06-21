@@ -11,6 +11,7 @@ import ubersystem.service.RideService;
 import java.time.LocalDateTime;
 
 @RestController
+@RequestMapping("/ride")
 public class RideController {
     private RideService rideService;
     @Autowired

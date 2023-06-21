@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @Slf4j
 public class TrackConfig {
-    private String host="tcp://localhost:1883";
+    private String host="ws://localhost:8083";
     private String clientId="track-backend";
     private String userName="Track";
     private String password="distinctive0930";

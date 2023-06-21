@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ubersystem.mapper.RideMapper;
 import ubersystem.mqtt.Ride.RideClient;
 import ubersystem.pojo.Ride;
+import ubersystem.service.MqttService;
 import ubersystem.service.RideService;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Service
-public class RideServiceImpl implements RideService {
+public class RideServiceImpl extends MqttService implements RideService {
 
     private RideMapper rideMapper;
     @Autowired
@@ -34,7 +35,7 @@ public class RideServiceImpl implements RideService {
         try {
             RideClient.getClient().publish(ride.getMqttChannelName(), message);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return ride;
     }
@@ -63,18 +64,18 @@ public class RideServiceImpl implements RideService {
     }
 
 
-    public MqttMessage getJson(Ride ride) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        String json = null;
-        try {
-            json = mapper.writeValueAsString(ride);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        MqttMessage message = new MqttMessage();
-        message.setPayload(json.getBytes());
-        return message;
-    }
+//    public MqttMessage getJson(Ride ride) {
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(new JavaTimeModule());
+//        String json = null;
+//        try {
+//            json = mapper.writeValueAsString(ride);
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//        MqttMessage message = new MqttMessage();
+//        message.setPayload(json.getBytes());
+//        return message;
+//    }
 
 }
