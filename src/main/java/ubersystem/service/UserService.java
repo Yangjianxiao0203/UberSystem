@@ -32,5 +32,10 @@ public interface UserService {
      */
     public int updateUser(User user);
 
+    /**
+     * delete user
+     */
+    public int deleteUser(Long uid);
+
 
 }

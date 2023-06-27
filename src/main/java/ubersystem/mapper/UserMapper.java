@@ -21,4 +21,7 @@ public interface UserMapper {
     @Update("update user set phone_number = #{phoneNumber}, identity = #{identity}, secret_key = #{secretKey}, user_name = #{userName}, car_number = #{carNumber}, car_type = #{carType}, total_ride_number = #{totalRideLength}, province = #{province}, city = #{city} where uid = #{uid}")
     int updateUser(User user);
 
+    @Delete("delete from user where uid = #{uid}")
+    int deleteUser(@Param("uid") Long uid);
+
 }

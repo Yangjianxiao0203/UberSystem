@@ -63,4 +63,9 @@ public class UserServiceImplBasic implements UserService {
 
         return userMapper.updateUser(user);
     }
+
+    @Override
+    public int deleteUser(Long uid) {
+        return userMapper.deleteUser(uid);
+    }
 }

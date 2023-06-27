@@ -42,6 +42,16 @@ public class UserController {
         return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", token);
     }
 
+    @GetMapping("/user")
+    public Result<User> getMySelf(@RequestHeader("x-auth-token") String token) {
+        Long uid = JwtUtils.getUid(token);
+        User user = userService.getUserByUid(uid);
+        if (user == null) {
+            return new Result<>(ResponseStatus.AUTH_ERROR.getStatus(), ResponseStatus.AUTH_ERROR.getMessage(), null);
+        }
+        return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", user);
+    }
+
     @GetMapping("/login")
     public Result<String> login(@RequestParam String phoneNumber, @RequestParam String password) {
         User user = userService.login(phoneNumber, password);
@@ -79,6 +89,17 @@ public class UserController {
             return new Result<>(ResponseStatus.FAILURE.getCode(), ResponseStatus.FAILURE.getMessage(), null);
         }
         return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", updateUser);
+    }
+
+
+    @DeleteMapping("/user")
+    public Result<String> deleteUser(@RequestHeader("x-auth-token") String token) {
+        Long uid = JwtUtils.getUid(token);
+        int res = userService.deleteUser(uid);
+        if (res < 0) {
+            return new Result<>(ResponseStatus.FAILURE.getCode(), ResponseStatus.FAILURE.getMessage(), null);
+        }
+        return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", null);
     }
 
     public String createRandomUserName() {

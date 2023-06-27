@@ -31,6 +31,11 @@ public class JwtUtils {
         return verifier.verify(token);
     }
 
+    public static Long getUid(String token) {
+        DecodedJWT jwt = verifyToken(token);
+        return jwt.getClaim("uid").asLong();
+    }
+
     public static boolean verifyToken(String token, Long uid) {
         DecodedJWT jwt = verifyToken(token);
         return Objects.equals(jwt.getClaim("uid").asLong(), uid);
