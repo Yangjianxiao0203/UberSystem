@@ -22,5 +22,15 @@ public interface UserService {
      */
     public User login(String phoneNumber, String token);
 
+    /**
+     * get user by uid
+     */
+    public User getUserByUid(Long uid);
+
+    /**
+     * update user
+     */
+    public int updateUser(User user);
+
 
 }

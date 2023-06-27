@@ -8,6 +8,7 @@ public enum ResponseStatus {
     USER_ALREADY_EXIST("402", "3","User already exists"),
 
     AUTH_ERROR("403", "error code","User does not exist or password error"),
+
     FAILURE("500", "-1","Server failed");
 
     private final String code;

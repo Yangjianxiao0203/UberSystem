@@ -49,6 +49,18 @@ public class UserServiceImplBasic implements UserService {
 
     @Override
     public String createToken(User user) {
-        return JwtUtils.generateToken(user.getUid().toString());
+        return JwtUtils.generateToken(user);
+    }
+
+    @Override
+    public User getUserByUid(Long uid) {
+        return userMapper.getUserByUid(uid);
+    }
+
+    @Override
+    public int updateUser(User user) {
+        //todo: check if data is valid
+
+        return userMapper.updateUser(user);
     }
 }

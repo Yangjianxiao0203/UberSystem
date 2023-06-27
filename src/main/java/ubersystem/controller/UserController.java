@@ -6,6 +6,7 @@ import ubersystem.Result.ResponseStatus;
 import ubersystem.Result.Result;
 import ubersystem.pojo.User;
 import ubersystem.service.UserService;
+import ubersystem.utils.JwtUtils;
 
 import java.util.UUID;
 
@@ -51,14 +52,33 @@ public class UserController {
         return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", token);
     }
 
+    /**
+     * @param uid
+     * @param token
+     * @param updateUser : need full user updated info, except uid
+     * @return Result<User>
+     */
+
     @PutMapping("/user/{uid}")
-    public Result<String> updateUser(@PathVariable("uid") Long uid) {
-//        int res = userService.updateUser(user);
-        int res=0;
+    public Result<User> updateUser(@PathVariable("uid") Long uid, @RequestHeader("x-auth-token") String token, @RequestBody User updateUser) {
+
+        //first, get user, if not self or not exist, return error
+        User user = userService.getUserByUid(uid);
+        if (user == null ) {
+            return new Result<>(ResponseStatus.AUTH_ERROR.getStatus(), ResponseStatus.AUTH_ERROR.getMessage(), null);
+        }
+        boolean isAuth = JwtUtils.verifyToken(token,uid);
+        if(!isAuth) {
+            return new Result<>(ResponseStatus.AUTH_ERROR.getStatus(), ResponseStatus.AUTH_ERROR.getMessage(), null);
+        }
+
+        updateUser.setUid(uid);
+
+        int res = userService.updateUser(updateUser);
         if (res < 0) {
             return new Result<>(ResponseStatus.FAILURE.getCode(), ResponseStatus.FAILURE.getMessage(), null);
         }
-        return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", null);
+        return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", updateUser);
     }
 
     public String createRandomUserName() {

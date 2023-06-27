@@ -1,11 +1,8 @@
 package ubersystem.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.data.repository.query.Param;
 import ubersystem.pojo.User;
-import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface UserMapper {
@@ -16,4 +13,12 @@ public interface UserMapper {
 
     @Select("SELECT * FROM user WHERE phone_number = #{phoneNumber} LIMIT 1")
     User getUserByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+
+    @Select("SELECT * FROM user WHERE uid = #{uid} LIMIT 1")
+    User getUserByUid(@Param("uid") Long uid);
+
+
+    @Update("update user set phone_number = #{phoneNumber}, identity = #{identity}, secret_key = #{secretKey}, user_name = #{userName}, car_number = #{carNumber}, car_type = #{carType}, total_ride_number = #{totalRideLength}, province = #{province}, city = #{city} where uid = #{uid}")
+    int updateUser(User user);
+
 }
