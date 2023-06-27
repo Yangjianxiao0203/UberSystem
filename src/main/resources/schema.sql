@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS user(
                       uid BIGINT PRIMARY KEY AUTO_INCREMENT,
                       phone_number VARCHAR(255),

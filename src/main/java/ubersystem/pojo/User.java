@@ -12,7 +12,7 @@ public class User {
     private Long uid;
     private String phoneNumber;
     private UserType identity; // 'Driver' or 'Passenger'
-    private String secretKey;
+    private String secretKey; // this should be a hashed password
     private String userName;
     private String carNumber;
     private String carType;
