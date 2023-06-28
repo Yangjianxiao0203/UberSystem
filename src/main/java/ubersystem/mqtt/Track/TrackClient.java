@@ -68,6 +68,16 @@ public class TrackClient {
         }
     }
 
+    public void subscribe(String channelName) {
+        log.info("track client start to subscribe topic:" + channelName);
+        try {
+            int qos=trackConfig.getQos();
+            client.subscribe(channelName, qos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void reconnect() {
         try {
             client.reconnect();

@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS user(
                       city VARCHAR(255)
 );
 
-
+DROP TABLE IF EXISTS `logs`;
 CREATE TABLE IF NOT EXISTS `logs` (
                         `id` BIGINT NOT NULL AUTO_INCREMENT,
                         `timestamp` DATETIME NOT NULL,
@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `logs` (
                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `ride`;
 CREATE TABLE IF NOT EXISTS `ride` (
                         `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
                         `creation_time` DATETIME,
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `ride` (
 DROP TABLE IF EXISTS `order`;
 CREATE TABLE IF NOT EXISTS `order` (
                          `id` BIGINT NOT NULL AUTO_INCREMENT,
-                         `ride_id` BIGINT NOT NULL,
+                         `ride_id` BIGINT ,
                          `creation_time` DATETIME NOT NULL,
                          `total_cost` DOUBLE,
                          `base_cost` DOUBLE,
@@ -57,11 +58,10 @@ CREATE TABLE IF NOT EXISTS `order` (
                          `time_cost` DOUBLE,
                          `special_location_servicecost` DOUBLE,
                          `dynamic_cost` DOUBLE,
-                         `status` ENUM('Unpaid', 'PaidOrderComplete', 'RefundProcessing', 'Refunded') NOT NULL,
+                         `status` ENUM('Unpaid', 'Paid','PaidOrderComplete', 'RefundProcessing', 'Refunded') NOT NULL,
                          `payment_platform` VARCHAR(255),
                          `payment_platform_serial_number` VARCHAR(255),
                          `payment_result_from_platform` VARCHAR(255),
-                         FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`),
                          PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

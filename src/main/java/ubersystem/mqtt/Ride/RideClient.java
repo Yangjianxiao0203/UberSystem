@@ -59,10 +59,19 @@ public class RideClient {
             int qos = rideConfig.getQos();
             for(String channel: rideConfig.getChannels()) {
                 client.subscribe(channel, qos);
-//                log.info("subscribed to topic: {}, qos: {}" ,channel,qos);
             }
             log.info("ride client subscribed process finished");
         } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void subscribe(String channel) {
+        log.info("ride client start to subscribe topic: "+channel);
+        try {
+            int qos = rideConfig.getQos();
+            client.subscribe(channel, qos);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

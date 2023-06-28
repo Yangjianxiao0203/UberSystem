@@ -22,6 +22,9 @@ public class TrackServiceImpl extends MqttService implements TrackService {
     TrackMapper trackMapper;
 
     @Autowired
+    TrackClient trackClient;
+
+    @Autowired
     CoordinateMapper coordinateMapper;
     @Override
     public Track createTrack(Track track) {
@@ -33,6 +36,11 @@ public class TrackServiceImpl extends MqttService implements TrackService {
             throw new RuntimeException(e);
         }
         return track;
+    }
+
+    @Override
+    public void listenToTrack(String channelName) {
+        trackClient.subscribe(channelName);
     }
 
 }

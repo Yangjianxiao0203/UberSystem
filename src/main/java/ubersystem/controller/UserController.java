@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ubersystem.Result.ResponseStatus;
 import ubersystem.Result.Result;
 import ubersystem.pojo.User;
+import ubersystem.service.AuthService;
 import ubersystem.service.UserService;
 import ubersystem.utils.JwtUtils;
 
@@ -12,12 +13,11 @@ import java.util.UUID;
 
 @RestController
 public class UserController {
+    @Autowired
     private UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private AuthService authService;
 
     @PostMapping("/user")
     public Result<String> registerUser(@RequestBody User user) {

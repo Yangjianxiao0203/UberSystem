@@ -14,9 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Ride {
     private Long id;
-    private LocalDateTime creationTime;
     private Long passengerUid;
     private Long driverUid;
+    private Long orderId;
+
+    private LocalDateTime creationTime;
     private String mqttChannelName;
     private RideType rideType; // 'Economy', 'Comfort', 'Luxury'
     private String startPointCoordinates;
@@ -29,7 +31,6 @@ public class Ride {
     private LocalDateTime arrivalTime;
     private LocalDateTime cancellationTime;
     private Double rideLength;
-    private Long orderId;
     private String alertStatus; // not involved in the current project
     private String aftersalesStatus; // not involved in the current project
     private Double rideScore;

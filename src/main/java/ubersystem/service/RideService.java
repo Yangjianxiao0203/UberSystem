@@ -17,4 +17,7 @@ public interface RideService {
     public boolean pickUpPassenger(Long rideId, LocalDateTime pickUpTime);
     @Transactional
     public boolean arriveAtDestination(Long rideId, LocalDateTime arrivalTime);
+
+    @Transactional
+    public void listenToRide(String channel);
 }

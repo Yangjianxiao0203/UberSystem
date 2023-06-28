@@ -1,8 +1,9 @@
 package ubersystem.Enums;
 
 public enum OrderStatus {
-    // 'Unpaid', 'PaidOrderComplete', 'RefundProcessing', 'Refunded'
+    // 'Unpaid', ''Paid','PaidOrderComplete', 'RefundProcessing', 'Refunded'
     Unpaid,
+    Paid,
     PaidOrderComplete,
     RefundProcessing,
     Refunded

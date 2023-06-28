@@ -9,6 +9,12 @@ public enum ResponseStatus {
 
     AUTH_ERROR("403", "error code","User does not exist or password error"),
 
+    // distribute error
+    ORDER_ALREADY_ACCEPTED("400", "distribution failed","Order already accepted"),
+
+    // ride create fail because not paid
+    CREATE_RIDE_ERROR("400", "ride create failed","Ride create failed"),
+
     FAILURE("500", "-1","Server failed");
 
     private final String code;

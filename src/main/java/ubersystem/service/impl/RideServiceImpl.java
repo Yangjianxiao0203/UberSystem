@@ -13,23 +13,19 @@ import ubersystem.service.RideService;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Service
 public class RideServiceImpl extends MqttService implements RideService {
 
+    @Autowired
     private RideMapper rideMapper;
     @Autowired
-    public RideServiceImpl(RideMapper rideMapper) {
-        this.rideMapper = rideMapper;
-    }
+    private RideClient rideClient;
 
     @Transactional
     @Override
     public Ride createRide(Ride ride) {
-        rideMapper.createRide(ride);
+        rideMapper.insert(ride);
         //publish it to mqtt ride broker, with correct topic
         MqttMessage message = getJson(ride);
         try {
@@ -63,19 +59,8 @@ public class RideServiceImpl extends MqttService implements RideService {
         return rows > 0;
     }
 
-
-//    public MqttMessage getJson(Ride ride) {
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.registerModule(new JavaTimeModule());
-//        String json = null;
-//        try {
-//            json = mapper.writeValueAsString(ride);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//        }
-//        MqttMessage message = new MqttMessage();
-//        message.setPayload(json.getBytes());
-//        return message;
-//    }
-
+    @Override
+    public void listenToRide(String channel) {
+        rideClient.subscribe(channel);
+    }
 }
