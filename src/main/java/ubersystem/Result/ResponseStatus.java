@@ -15,6 +15,9 @@ public enum ResponseStatus {
     // ride create fail because not paid
     CREATE_RIDE_ERROR("400", "ride create failed","Ride create failed"),
 
+    //order
+    PAYMENT_ERROR("400", "payment failed","Payment failed"),
+
     FAILURE("500", "-1","Server failed");
 
     private final String code;

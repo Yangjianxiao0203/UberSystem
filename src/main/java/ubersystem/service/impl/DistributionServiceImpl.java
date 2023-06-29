@@ -69,10 +69,8 @@ public class DistributionServiceImpl implements DistributionService {
         order.setCreationTime(LocalDateTime.now());
         orderMapper.insert(order);
 
-        //todo: go to pay section, if not paid then return order id by throwing exception
-        // some pay action
 
-        order.setStatus(OrderStatus.Paid);
+        order.setStatus(OrderStatus.Unpaid);
 
         // 创建行程Ride
         Ride ride = new Ride();

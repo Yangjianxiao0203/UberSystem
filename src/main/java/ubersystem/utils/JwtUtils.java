@@ -41,4 +41,19 @@ public class JwtUtils {
         return Objects.equals(jwt.getClaim("uid").asLong(), uid);
     }
 
+    //create token by id
+    public static String createTokenById(Long id) {
+        return JWT.create()
+                .withClaim("id", id)
+                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 1000)) // 1 hour token validity
+                .sign(algorithm);
+    }
+
+    public static Long getId(String token) {
+        DecodedJWT jwt = verifyToken(token);
+        return jwt.getClaim("id").asLong();
+    }
+
+
+
 }
