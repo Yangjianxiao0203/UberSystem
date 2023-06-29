@@ -16,7 +16,7 @@ public class MqttListener {
     @Bean
     public RideClient getRideClient() {
         rideClient.connect();
-        rideClient.subscribe();
+//        rideClient.subscribe();
         return rideClient;
     }
 
@@ -25,7 +25,7 @@ public class MqttListener {
     @Bean
     public TrackClient getTrackClient() {
         trackClient.connect();
-        trackClient.subscribe();
+//        trackClient.subscribe();
         return trackClient;
     }
 }

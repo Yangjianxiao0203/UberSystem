@@ -1,4 +1,4 @@
-package ubersystem.pojo;
+package ubersystem.pojo.request.distribution;
 
 import lombok.Data;
 import ubersystem.Enums.RideType;

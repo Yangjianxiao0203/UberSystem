@@ -1,4 +1,4 @@
-package ubersystem.pojo;
+package ubersystem.pojo.request.distribution;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

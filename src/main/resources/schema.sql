@@ -1,4 +1,9 @@
 DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `logs`;
+DROP TABLE IF EXISTS track;
+DROP TABLE IF EXISTS ride;
+DROP TABLE IF EXISTS `order`;
+
 CREATE TABLE IF NOT EXISTS user(
                       uid BIGINT PRIMARY KEY AUTO_INCREMENT,
                       phone_number VARCHAR(255),
@@ -12,7 +17,7 @@ CREATE TABLE IF NOT EXISTS user(
                       city VARCHAR(255)
 );
 
-DROP TABLE IF EXISTS `logs`;
+
 CREATE TABLE IF NOT EXISTS `logs` (
                         `id` BIGINT NOT NULL AUTO_INCREMENT,
                         `timestamp` DATETIME NOT NULL,
@@ -22,7 +27,6 @@ CREATE TABLE IF NOT EXISTS `logs` (
                         PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `ride`;
 CREATE TABLE IF NOT EXISTS `ride` (
                         `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
                         `creation_time` DATETIME,
@@ -47,7 +51,17 @@ CREATE TABLE IF NOT EXISTS `ride` (
                         `ride_review` TEXT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE IF EXISTS `order`;
+CREATE TABLE IF NOT EXISTS `track` (
+                                       `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                       `ride_id` BIGINT,
+                                       `time_sequence` DATETIME,
+                                       `mqtt_channel_name` VARCHAR(255),
+                                       `coordinate` varchar(255),
+                                       `speed_track` DOUBLE,
+                                       `altitude` DOUBLE,
+                                       FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `order` (
                          `id` BIGINT NOT NULL AUTO_INCREMENT,
                          `ride_id` BIGINT ,
@@ -71,15 +85,4 @@ CREATE TABLE IF NOT EXISTS `coordinate` (
                                             `latitude` DOUBLE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DROP TABLE track;
-CREATE TABLE IF NOT EXISTS `track` (
-                                       `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-                                       `ride_id` BIGINT,
-                                       `time_sequence` DATETIME,
-                                       `mqtt_channel_name` VARCHAR(255),
-                                       `coordinate` varchar(255),
-                                       `speed_track` DOUBLE,
-                                       `altitude` DOUBLE,
-                                       FOREIGN KEY (`ride_id`) REFERENCES `ride`(`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
