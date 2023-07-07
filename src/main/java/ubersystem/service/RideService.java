@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ubersystem.pojo.Ride;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface RideService {
     @Transactional
@@ -20,4 +21,10 @@ public interface RideService {
 
     @Transactional
     public void listenToRide(String channel);
+
+    @Transactional
+    public void publishRide(Ride ride);
+
+    @Transactional
+    public void publishRides(List<Ride> rides);
 }

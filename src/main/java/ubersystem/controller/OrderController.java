@@ -13,6 +13,7 @@ import ubersystem.pojo.request.order.PostToPriceRequest;
 import ubersystem.service.OrderService;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/order")
 @Slf4j
 public class OrderController {

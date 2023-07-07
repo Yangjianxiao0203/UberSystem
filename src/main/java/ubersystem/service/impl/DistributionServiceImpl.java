@@ -1,6 +1,9 @@
 package ubersystem.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ubersystem.Enums.OrderStatus;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
+@Slf4j
 public class DistributionServiceImpl implements DistributionService {
 
     @Autowired
@@ -46,7 +50,6 @@ public class DistributionServiceImpl implements DistributionService {
 
         String channelName = ChannelGenerator.generateTrackChannelName(rideId);
 
-        ride.setMqttChannelName(channelName);
         ride.setStatus(RideStatus.DriverAccepted);
         int res = rideMapper.updateRide(ride);
         if(res<=0) {
@@ -69,7 +72,6 @@ public class DistributionServiceImpl implements DistributionService {
         order.setCreationTime(LocalDateTime.now());
         orderMapper.insert(order);
 
-
         order.setStatus(OrderStatus.Unpaid);
 
         // 创建行程Ride
@@ -83,6 +85,8 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setStatus(RideStatus.Created);
         ride.setMqttChannelName(getRegionTopic(request.getProvince(), request.getCity()));
         ride.setOrderId(order.getId());
+
+        ride.setRideLength(getDistance(ride.getStartPointAddress(), ride.getEndPointAddress()));
         rideMapper.insert(ride);
 
         // 更新订单的rideId
@@ -92,9 +96,20 @@ public class DistributionServiceImpl implements DistributionService {
         //订阅ride MQTT频道
         rideService.listenToRide(ride.getMqttChannelName());
 
+        //发布ride
+        rideService.publishRide(ride);
 
         return ride.getId().toString();
     }
+
+//    @Scheduled(fixedRate = 10000)
+//    public void publishRideUpdates() {
+//        List<Ride> rides = rideMapper.findByRideStatus(RideStatus.Created); // Fetch all rides
+//        log.info("publishing rides: " + rides.size());
+//        for (Ride ride : rides) {
+//            rideService.publishRide(ride);
+//        }
+//    }
 
     @Override
     @Transactional
@@ -138,7 +153,7 @@ public class DistributionServiceImpl implements DistributionService {
     }
 
     private String getRegionTopic(String province, String city) {
-        return province + "-" + city;
+        return "ride-"+province + "-" + city;
     }
 
     public List<String> getNearByVehicles (double lat, double lon) {
@@ -146,5 +161,27 @@ public class DistributionServiceImpl implements DistributionService {
         //todo : get nearby vehicles
 
         return res;
+    }
+
+    public double getDistance(String start, String end) {
+        String[] startArr=start.split(",");
+        String[] endArr=end.split(",");
+        double lat1=Double.parseDouble(startArr[0]);
+        double lon1=Double.parseDouble(startArr[1]);
+        double lat2=Double.parseDouble(endArr[0]);
+        double lon2=Double.parseDouble(endArr[1]);
+
+        return getDistance(lat1, lon1, lat2, lon2);
+    }
+    public double getDistance(double lat1,double lon1, double lat2, double lon2) {
+        double R = 6371.393; // km
+        double dLat = Math.toRadians(lat2-lat1);
+        double dLon = Math.toRadians(lon2-lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon/2) * Math.sin(dLon/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        return R * c;
     }
 }

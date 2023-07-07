@@ -12,6 +12,7 @@ import ubersystem.utils.JwtUtils;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin
 public class UserController {
     @Autowired
     private UserService userService;

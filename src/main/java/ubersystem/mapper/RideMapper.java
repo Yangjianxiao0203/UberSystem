@@ -1,9 +1,12 @@
 package ubersystem.mapper;
 
 import org.apache.ibatis.annotations.*;
+import ubersystem.Enums.RideStatus;
+import ubersystem.Enums.RideType;
 import ubersystem.pojo.Ride;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper
 public interface RideMapper {
@@ -55,5 +58,7 @@ public interface RideMapper {
             + "WHERE id = #{ride.id}")
     int updateRide(@Param("ride") Ride ride);
 
+    @Select("SELECT * FROM ride WHERE status = #{rideStatus}")
+    List<Ride> findByRideStatus(@Param("rideStatus") RideStatus rideStatus);
 
 }

@@ -5,15 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ubersystem.Result.ResponseStatus;
 import ubersystem.Result.Result;
 import ubersystem.pojo.Track;
 import ubersystem.service.TrackService;
 
+@CrossOrigin
 @RestController
 @Data
 @Slf4j

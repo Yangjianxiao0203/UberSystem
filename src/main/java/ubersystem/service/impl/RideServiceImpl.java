@@ -12,6 +12,7 @@ import ubersystem.service.MqttService;
 import ubersystem.service.RideService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -62,5 +63,19 @@ public class RideServiceImpl extends MqttService implements RideService {
     @Override
     public void listenToRide(String channel) {
         rideClient.subscribe(channel);
+    }
+
+    @Override
+    public void publishRide(Ride ride) {
+        MqttMessage message = getJson(ride);
+        try {
+            RideClient.getClient().publish(ride.getMqttChannelName(), message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public void publishRides(List<Ride> rides) {
+
     }
 }

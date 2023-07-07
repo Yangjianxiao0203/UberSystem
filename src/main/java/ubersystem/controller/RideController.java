@@ -13,6 +13,7 @@ import ubersystem.service.DistributionService;
 import ubersystem.service.RideService;
 
 @RestController
+@CrossOrigin
 @Slf4j
 @RequestMapping("/ride")
 public class RideController {
