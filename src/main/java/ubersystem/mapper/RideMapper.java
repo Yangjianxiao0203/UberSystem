@@ -32,7 +32,7 @@ public interface RideMapper {
     Ride getRideById(@Param("rideId") Long rideId);
 
     @Select("SELECT * FROM ride WHERE passenger_uid = #{passengerUid}")
-    Ride getRideByPassengerUid(@Param("passengerUid") Long passengerUid);
+    List<Ride> getRideByPassengerUid(@Param("passengerUid") Long passengerUid);
 
     @Update("UPDATE ride SET "
             + "creation_time = #{ride.creationTime}, "

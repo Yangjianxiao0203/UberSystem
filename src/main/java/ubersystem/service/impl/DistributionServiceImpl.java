@@ -39,6 +39,7 @@ public class DistributionServiceImpl implements DistributionService {
     private RideService rideService;
 
     @Override
+    @Transactional
     public synchronized String driverAcceptsOrder(DriverAcceptOrderRequest request, Long rideId) {
         Ride ride=rideMapper.getRideById(rideId);
         if(ride==null) {
@@ -51,13 +52,22 @@ public class DistributionServiceImpl implements DistributionService {
         String channelName = ChannelGenerator.generateTrackChannelName(rideId);
 
         ride.setStatus(RideStatus.DriverAccepted);
+        ride.setDriverUid(request.getDriverUid());
+
         int res = rideMapper.updateRide(ride);
         if(res<=0) {
             throw new RuntimeException("update ride failed");
         }
-
         //发布内容，让track监听这个行程
         trackService.listenToTrack(channelName);
+
+//        // create track
+//        Track track = new Track();
+//        track.setRideId(rideId);
+//        track.setMqttChannelName(channelName);
+//        track.setTimeSequence(LocalDateTime.now());
+//
+//        trackService.createTrack(track);
 
         return channelName;
     }
@@ -110,6 +120,21 @@ public class DistributionServiceImpl implements DistributionService {
 //            rideService.publishRide(ride);
 //        }
 //    }
+
+    @Override
+    @Transactional
+    public List<Ride> getAcceptedRide(Long uid) {
+        List<Ride> rides = rideMapper.getRideByPassengerUid(uid);
+        // remain the DriverAccepted rides
+        List<Ride> res = new ArrayList<>();
+        for(Ride ride: rides) {
+            if(ride.getStatus()== RideStatus.DriverAccepted) {
+                res.add(ride);
+            }
+        }
+        return res;
+    }
+
 
     @Override
     @Transactional

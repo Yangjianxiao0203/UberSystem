@@ -17,7 +17,6 @@ public class Ride {
     private Long passengerUid;
     private Long driverUid;
     private Long orderId;
-
     private LocalDateTime creationTime;
     private String mqttChannelName;
     private RideType rideType; // 'Economy', 'Comfort', 'Luxury'

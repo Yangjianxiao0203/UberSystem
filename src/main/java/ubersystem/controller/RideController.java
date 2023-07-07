@@ -11,6 +11,9 @@ import ubersystem.pojo.request.distribution.DriverAcceptOrderRequest;
 import ubersystem.pojo.request.distribution.OrderCreationRequest;
 import ubersystem.service.DistributionService;
 import ubersystem.service.RideService;
+import ubersystem.utils.JwtUtils;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -75,4 +78,15 @@ public class RideController {
         }
     }
 
+    @GetMapping("/accepted")
+    public Result<List<Ride>> getAcceptedRide(@RequestHeader("x-auth-token") String token) {
+        Long uid = JwtUtils.getUid(token);
+        log.info("getAcceptedRide by uid:{}", uid);
+        try {
+            List<Ride> rides = distributionService.getAcceptedRide(uid);
+            return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);
+        } catch (Exception e) {
+            return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
+        }
+    }
 }
