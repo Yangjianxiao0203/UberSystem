@@ -9,4 +9,7 @@ public interface TrackService {
 
     @Transactional
     public void listenToTrack(String channelName);
+
+    @Transactional
+    public Track getTrackByRid(Long rid);
 }

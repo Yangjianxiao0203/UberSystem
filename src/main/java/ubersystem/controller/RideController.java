@@ -39,6 +39,21 @@ public class RideController {
     }
 
     /**
+     * @param rid
+     * @Description: Passenger: get track channelName by rid
+     */
+    @GetMapping("/track/{rid}")
+    public Result<String> getTrackIdByRid(@PathVariable("rid") Long rid) {
+        log.info("getTrackIdByRid {}",rid);
+        try{
+            String channelName = distributionService.getTrackIdByRid(rid);
+            return new Result<>(ResponseStatus.SUCCESS.getStatus(),ResponseStatus.SUCCESS.getMessage(), channelName);
+        } catch (Exception e) {
+            return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), e.getMessage());
+        }
+    }
+
+    /**
      * @param request
      * @return : ride id (if paid) or order id (if not paid)
      */

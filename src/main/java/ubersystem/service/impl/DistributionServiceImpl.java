@@ -41,6 +41,7 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     @Transactional
     public synchronized String driverAcceptsOrder(DriverAcceptOrderRequest request, Long rideId) {
+        log.info("driverUid: {} try to accept ride: {}", request.getDriverUid(), rideId);
         Ride ride=rideMapper.getRideById(rideId);
         if(ride==null) {
             throw new RuntimeException("ride not found");
@@ -61,15 +62,23 @@ public class DistributionServiceImpl implements DistributionService {
         //发布内容，让track监听这个行程
         trackService.listenToTrack(channelName);
 
-//        // create track
-//        Track track = new Track();
-//        track.setRideId(rideId);
-//        track.setMqttChannelName(channelName);
-//        track.setTimeSequence(LocalDateTime.now());
-//
-//        trackService.createTrack(track);
+        // create track
+        Track track = new Track();
+        track.setRideId(rideId);
+        track.setMqttChannelName(channelName);
+        track.setTimeSequence(LocalDateTime.now());
+        trackService.createTrack(track);
 
         return channelName;
+    }
+
+    @Override
+    public String getTrackIdByRid(Long rid) {
+        Track track = trackService.getTrackByRid(rid);
+        if(track==null) {
+            throw new RuntimeException("track not found");
+        }
+        return track.getMqttChannelName();
     }
 
     @Transactional
@@ -91,6 +100,7 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setStartPointCoordinates(request.getPickUpLat() + "," + request.getPickUpLong());
         ride.setStartPointAddress(request.getPickUpResolvedAddress());
         ride.setEndPointAddress(request.getDesResolvedAddress());
+        ride.setEndPointCoordinates(request.getDesResolvedAddress());
         ride.setRideType(request.getType());
         ride.setStatus(RideStatus.Created);
         ride.setMqttChannelName(getRegionTopic(request.getProvince(), request.getCity()));
@@ -111,15 +121,6 @@ public class DistributionServiceImpl implements DistributionService {
 
         return ride.getId().toString();
     }
-
-//    @Scheduled(fixedRate = 10000)
-//    public void publishRideUpdates() {
-//        List<Ride> rides = rideMapper.findByRideStatus(RideStatus.Created); // Fetch all rides
-//        log.info("publishing rides: " + rides.size());
-//        for (Ride ride : rides) {
-//            rideService.publishRide(ride);
-//        }
-//    }
 
     @Override
     @Transactional

@@ -39,6 +39,11 @@ public class TrackServiceImpl extends MqttService implements TrackService {
     }
 
     @Override
+    public Track getTrackByRid(Long rid) {
+        return trackMapper.selectTrackByRideId(rid);
+    }
+
+    @Override
     public void listenToTrack(String channelName) {
         trackClient.subscribe(channelName);
     }

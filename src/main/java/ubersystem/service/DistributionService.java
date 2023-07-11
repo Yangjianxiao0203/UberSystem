@@ -23,4 +23,7 @@ public interface DistributionService {
 
     @Transactional
     public List<Ride> getAcceptedRide(Long uid);
+
+    @Transactional
+    public String getTrackIdByRid(Long rid);
 }
