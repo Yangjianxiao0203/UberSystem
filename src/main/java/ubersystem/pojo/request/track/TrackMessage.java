@@ -26,4 +26,7 @@ public class TrackMessage {
 
     @JsonProperty("rid")
     private Long rid;
+
+    @JsonProperty("speed")
+    private double speed;
 }

@@ -37,6 +37,7 @@ public class TrackMessageHandler implements MessageHandler {
                 if(track!=null) {
                     track.setTimeSequence(LocalDateTime.now());
                     track.setCoordinate(trackMessage.getLatitude()+","+trackMessage.getLongitude());
+                    track.setSpeedTrack(trackMessage.getSpeed());
                     trackMapper.updateTrack(track);
                 }
                 if(ride!=null) {
@@ -45,7 +46,7 @@ public class TrackMessageHandler implements MessageHandler {
                     ride.setStatus(rideStatus);
                     rideMapper.updateRide(ride);
                 }
-                log.info("Track message saved, track: {}, ride: {}", track,ride);
+                log.info("Track message saved, track: {}, ride status: {}", track,ride.getStatus());
             }
         } catch (Exception e) {
             e.printStackTrace();
