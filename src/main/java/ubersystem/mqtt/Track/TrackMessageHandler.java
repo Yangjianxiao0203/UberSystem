@@ -49,6 +49,8 @@ public class TrackMessageHandler implements MessageHandler {
                 log.info("Track message saved, track: {}, ride status: {}", track,ride.getStatus());
             }
         } catch (Exception e) {
+            //print out the message
+            log.warn("mqtt message: {}",message);
             e.printStackTrace();
         }
 

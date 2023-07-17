@@ -7,11 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ubersystem.Enums.RideStatus;
 
+import javax.sql.rowset.spi.SyncResolver;
+
 @Data
 @Slf4j
 @AllArgsConstructor
 @NoArgsConstructor
 public class TrackMessage {
+
     @JsonProperty("user")
     private String user;
 

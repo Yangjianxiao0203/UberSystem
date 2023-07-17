@@ -16,6 +16,7 @@ import ubersystem.pojo.request.distribution.OrderCreationRequest;
 import ubersystem.service.DistributionService;
 import ubersystem.service.RideService;
 import ubersystem.service.TrackService;
+import ubersystem.service.UserService;
 import ubersystem.utils.ChannelGenerator;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,9 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Autowired
     private RideService rideService;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     @Transactional
@@ -83,15 +87,15 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Transactional
     public String createOrderAndRide(OrderCreationRequest request) {
-        //todo: check if user exists
-
+        User user = userService.getUserByUid(request.getUid());
+        if(user==null) {
+            throw new RuntimeException("user not found");
+        }
         // 创建订单
         Order order = new Order();
         order.setStatus(OrderStatus.Unpaid);
         order.setCreationTime(LocalDateTime.now());
         orderMapper.insert(order);
-
-        order.setStatus(OrderStatus.Unpaid);
 
         // 创建行程Ride
         Ride ride = new Ride();
@@ -100,15 +104,13 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setStartPointCoordinates(request.getPickUpLat() + "," + request.getPickUpLong());
         ride.setStartPointAddress(request.getPickUpResolvedAddress());
         ride.setEndPointAddress(request.getDesResolvedAddress());
-        ride.setEndPointCoordinates(request.getDesResolvedAddress());
+        ride.setEndPointCoordinates(request.getDesLat()+","+request.getDesLong());
         ride.setRideType(request.getType());
         ride.setStatus(RideStatus.Created);
         ride.setMqttChannelName(getRegionTopic(request.getProvince(), request.getCity()));
         ride.setOrderId(order.getId());
-
-        ride.setRideLength(getDistance(ride.getStartPointAddress(), ride.getEndPointAddress()));
+        ride.setRideLength(request.getRideLength());
         rideMapper.insert(ride);
-
         // 更新订单的rideId
         order.setRideId(ride.getId());
         orderMapper.update(order);

@@ -9,7 +9,10 @@ public class OrderCreationRequest {
     private Double pickUpLong;
     private Double pickUpLat;
     private String pickUpResolvedAddress;
+    private String desLong;
+    private String desLat;
     private String desResolvedAddress;
+    private Double rideLength;
     private RideType type;
     private String province;
     private String city;

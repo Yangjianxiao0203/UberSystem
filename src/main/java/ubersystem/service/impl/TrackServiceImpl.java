@@ -29,12 +29,12 @@ public class TrackServiceImpl extends MqttService implements TrackService {
     @Override
     public Track createTrack(Track track) {
         int res = trackMapper.insertTrack(track);
-        MqttMessage message = getJson(track);
-        try {
-            TrackClient.getClient().publish(track.getMqttChannelName(), message);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+//        MqttMessage message = getJson(track);
+//        try {
+//            TrackClient.getClient().publish(track.getMqttChannelName(), message);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
         return track;
     }
 

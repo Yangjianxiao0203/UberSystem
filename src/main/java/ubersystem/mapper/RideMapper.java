@@ -31,6 +31,7 @@ public interface RideMapper {
     @Select("SELECT * FROM ride WHERE id = #{rideId}")
     Ride getRideById(@Param("rideId") Long rideId);
 
+
     @Select("SELECT * FROM ride WHERE passenger_uid = #{passengerUid}")
     List<Ride> getRideByPassengerUid(@Param("passengerUid") Long passengerUid);
 
