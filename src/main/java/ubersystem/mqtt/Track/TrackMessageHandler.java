@@ -43,7 +43,8 @@ public class TrackMessageHandler implements MessageHandler {
                 if(ride!=null) {
                     String curStatus= trackMessage.getAction();
                     RideStatus rideStatus = RideStatus.valueOf(curStatus);
-                    ride.setStatus(rideStatus);
+//                    ride.setStatus(rideStatus);
+                    setStatus(ride, rideStatus);
                     rideMapper.updateRide(ride);
                 }
                 log.info("Track message saved, track: {}, ride status: {}", track,ride.getStatus());
@@ -54,5 +55,24 @@ public class TrackMessageHandler implements MessageHandler {
             e.printStackTrace();
         }
 
+    }
+
+    public void setStatus(Ride ride, RideStatus status) {
+        if(status == RideStatus.Arrived) {
+            ride.setArrivalTime(LocalDateTime.now());
+        }
+        else if(status == RideStatus.Cancelled) {
+            ride.setCancellationTime(LocalDateTime.now());
+        }
+        else if(status == RideStatus.PickedUpPassenger) {
+            ride.setPickUpTime(LocalDateTime.now());
+        }
+        else if(status == RideStatus.Created) {
+            ride.setCreationTime(LocalDateTime.now());
+        }
+        else if(status==RideStatus.OnRide) {
+            ride.setStatus(RideStatus.OnRide);
+        }
+        ride.setStatus(status);
     }
 }

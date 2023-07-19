@@ -13,10 +13,7 @@ import ubersystem.mapper.RideMapper;
 import ubersystem.pojo.*;
 import ubersystem.pojo.request.distribution.DriverAcceptOrderRequest;
 import ubersystem.pojo.request.distribution.OrderCreationRequest;
-import ubersystem.service.DistributionService;
-import ubersystem.service.RideService;
-import ubersystem.service.TrackService;
-import ubersystem.service.UserService;
+import ubersystem.service.*;
 import ubersystem.utils.ChannelGenerator;
 
 import java.time.LocalDateTime;
@@ -33,6 +30,9 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    OrderService orderService;
     @Autowired
     private TrackService trackService;
 
@@ -47,17 +47,24 @@ public class DistributionServiceImpl implements DistributionService {
     public synchronized String driverAcceptsOrder(DriverAcceptOrderRequest request, Long rideId) {
         log.info("driverUid: {} try to accept ride: {}", request.getDriverUid(), rideId);
         Ride ride=rideMapper.getRideById(rideId);
+//        User user = userService.getUserByUid(request.getDriverUid());
         if(ride==null) {
             throw new RuntimeException("ride not found");
         }
         if(ride.getStatus()!= RideStatus.Created) {
             throw new RuntimeException("ride has been accepted by others");
         }
+//        if(user==null) {
+//            throw new RuntimeException("user not found");
+//        }
+//        user.setCarNumber(request.getNumberPlate());
+//        user.setCarType(request.getVehicleInfo());
 
         String channelName = ChannelGenerator.generateTrackChannelName(rideId);
 
         ride.setStatus(RideStatus.DriverAccepted);
         ride.setDriverUid(request.getDriverUid());
+        ride.setDriverAcceptTime(LocalDateTime.now());
 
         int res = rideMapper.updateRide(ride);
         if(res<=0) {
@@ -111,9 +118,10 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setOrderId(order.getId());
         ride.setRideLength(request.getRideLength());
         rideMapper.insert(ride);
-        // 更新订单的rideId
+        // 更新订单的rideId, 生成价格
         order.setRideId(ride.getId());
         orderMapper.update(order);
+        orderService.createBillInOrderByRideId(ride.getId());
 
         //订阅ride MQTT频道
         rideService.listenToRide(ride.getMqttChannelName());
@@ -127,15 +135,8 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     @Transactional
     public List<Ride> getAcceptedRide(Long uid) {
-        List<Ride> rides = rideMapper.getRideByPassengerUid(uid);
-        // remain the DriverAccepted rides
-        List<Ride> res = new ArrayList<>();
-        for(Ride ride: rides) {
-            if(ride.getStatus()== RideStatus.DriverAccepted) {
-                res.add(ride);
-            }
-        }
-        return res;
+        List<Ride> rides = rideMapper.getRideByPassengerUidAndStatus(uid, RideStatus.DriverAccepted);
+        return rides;
     }
 
 
@@ -172,6 +173,7 @@ public class DistributionServiceImpl implements DistributionService {
         order.setStatus(OrderStatus.RefundProcessing);
 
         ride.setStatus(RideStatus.Cancelled);
+        ride.setCancellationTime(LocalDateTime.now());
 
         //update both in database
         rideMapper.updateRide(ride);

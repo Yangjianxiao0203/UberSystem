@@ -49,8 +49,8 @@ public class OrderController {
     }
 
     /**
-     * 创建支付请求，返回已签名的订单信息字符串（用jwt）
-     * params: uid, platform, platformSerialNumber
+     * 创建支付请求
+     * params: uid, platform,serialNumber
      * path: /order/{oid}
      */
     @PutMapping("/{oid}")
@@ -71,6 +71,20 @@ public class OrderController {
             } catch (RuntimeException e) {
                 return new Result<>(ResponseStatus.PAYMENT_ERROR.getStatus(), ResponseStatus.PAYMENT_ERROR.getMessage(), null);
             }
+        }
+    }
+
+    /**
+     * get order by rid
+     */
+    @GetMapping("")
+    public Result<Order> getOrderByRid(@RequestParam("rid") Long rid) {
+        log.info("getOrderByRid: {}", rid);
+        try{
+            Order order = orderService.getOrderByRid(rid);
+            return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), order);
+        } catch (RuntimeException e) {
+            return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
         }
     }
 

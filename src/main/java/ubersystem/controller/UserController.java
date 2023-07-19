@@ -103,6 +103,19 @@ public class UserController {
         return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", null);
     }
 
+    /**
+     * get driver by rid
+     * @return User
+     */
+    @GetMapping("/user/driver")
+    public Result<User> getDriverByRid(@RequestParam("rid") Long rid) {
+        User user = userService.getDriverByRid(rid);
+        if (user == null) {
+            return new Result<>(ResponseStatus.FAILURE.getCode(), ResponseStatus.FAILURE.getMessage(), null);
+        }
+        return new Result<>(ResponseStatus.SUCCESS.getCode(), "Success", user);
+    }
+
     public String createRandomUserName() {
         return "user-" + UUID.randomUUID().toString();
     }

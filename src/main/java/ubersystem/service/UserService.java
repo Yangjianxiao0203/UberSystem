@@ -28,6 +28,11 @@ public interface UserService {
     public User getUserByUid(Long uid);
 
     /**
+     * get user by rid
+     */
+    public User getDriverByRid(Long rid);
+
+    /**
      * update user
      */
     public int updateUser(User user);

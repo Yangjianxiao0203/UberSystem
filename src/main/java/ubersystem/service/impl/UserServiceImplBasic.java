@@ -4,21 +4,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ubersystem.Enums.LogLevel;
+import ubersystem.mapper.RideMapper;
 import ubersystem.mapper.UserMapper;
+import ubersystem.pojo.Ride;
 import ubersystem.pojo.User;
 import ubersystem.service.LogService;
+import ubersystem.service.RideService;
 import ubersystem.service.UserService;
 import ubersystem.utils.JwtUtils;
 
 @Service
 @Slf4j
 public class UserServiceImplBasic implements UserService {
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
-    public UserServiceImplBasic(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+    private RideMapper rideMapper;
+
 
     @Override
     public int registerUser(User user) {
@@ -67,5 +71,20 @@ public class UserServiceImplBasic implements UserService {
     @Override
     public int deleteUser(Long uid) {
         return userMapper.deleteUser(uid);
+    }
+
+    @Override
+    public User getDriverByRid(Long rid) {
+        Ride ride = rideMapper.getRideById(rid);
+        if (ride == null) {
+            log.error("ride not exist");
+            throw new RuntimeException("ride not exist");
+        }
+        Long uid= ride.getDriverUid();
+        if (uid == null) {
+            log.error("driver not exist");
+            throw new RuntimeException("driver not exist");
+        }
+        return userMapper.getUserByUid(uid);
     }
 }
