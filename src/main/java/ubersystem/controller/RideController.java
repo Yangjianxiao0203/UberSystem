@@ -104,4 +104,18 @@ public class RideController {
             return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
         }
     }
+
+    /**
+     * get all rides by uid
+     */
+    @GetMapping("")
+    public Result<List<Ride>> getAllRides(@RequestParam("uid") Long uid) {
+        log.info("getAllRides by uid:{}", uid);
+        try {
+            List<Ride> rides = rideService.getAllRides(uid);
+            return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);
+        } catch (Exception e) {
+            return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
+        }
+    }
 }

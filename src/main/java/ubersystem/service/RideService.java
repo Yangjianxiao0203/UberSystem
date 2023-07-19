@@ -27,4 +27,7 @@ public interface RideService {
 
     @Transactional
     public void publishRides(List<Ride> rides);
+
+    @Transactional
+    public List<Ride> getAllRides(Long uid);
 }

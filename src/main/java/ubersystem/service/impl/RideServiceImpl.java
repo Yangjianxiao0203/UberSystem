@@ -78,4 +78,10 @@ public class RideServiceImpl extends MqttService implements RideService {
     public void publishRides(List<Ride> rides) {
 
     }
+
+    @Override
+    public List<Ride> getAllRides(Long uid) {
+        List<Ride> rides = rideMapper.getRideByPassengerUid(uid);
+        return rides;
+    }
 }
