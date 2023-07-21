@@ -30,4 +30,7 @@ public interface RideService {
 
     @Transactional
     public List<Ride> getAllRides(Long uid);
+
+    @Transactional
+    public Ride getRideByRid(Long rideId);
 }

@@ -54,11 +54,6 @@ public class DistributionServiceImpl implements DistributionService {
         if(ride.getStatus()!= RideStatus.Created) {
             throw new RuntimeException("ride has been accepted by others");
         }
-//        if(user==null) {
-//            throw new RuntimeException("user not found");
-//        }
-//        user.setCarNumber(request.getNumberPlate());
-//        user.setCarType(request.getVehicleInfo());
 
         String channelName = ChannelGenerator.generateTrackChannelName(rideId);
 
