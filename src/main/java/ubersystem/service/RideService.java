@@ -1,23 +1,13 @@
 package ubersystem.service;
 
 import org.springframework.transaction.annotation.Transactional;
+import ubersystem.Enums.RideStatus;
 import ubersystem.pojo.Ride;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface RideService {
-    @Transactional
-    public Ride createRide(Ride ride);
-    @Transactional
-    public boolean cancelRide(Long rideId, LocalDateTime cancellationTime);
-    @Transactional
-    public boolean driverAcceptRide(Long rideId, Long driverUid, LocalDateTime driverAcceptTime);
-
-    @Transactional
-    public boolean pickUpPassenger(Long rideId, LocalDateTime pickUpTime);
-    @Transactional
-    public boolean arriveAtDestination(Long rideId, LocalDateTime arrivalTime);
 
     @Transactional
     public void listenToRide(String channel);
@@ -33,4 +23,13 @@ public interface RideService {
 
     @Transactional
     public Ride getRideByRid(Long rideId);
+
+    @Transactional
+    public int create(Ride ride);
+
+    @Transactional
+    public int updateRide(Ride ride);
+
+    @Transactional
+    public List<Ride> getRideByPassengerUidAndStatus(Long uid, RideStatus rideStatus);
 }

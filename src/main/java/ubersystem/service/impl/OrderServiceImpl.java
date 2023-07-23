@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ubersystem.Enums.OrderStatus;
+import ubersystem.Enums.TimeLevel;
 import ubersystem.mapper.OrderMapper;
 import ubersystem.mapper.UserMapper;
 import ubersystem.pojo.Order;
 import ubersystem.pojo.User;
 import ubersystem.pojo.request.order.PaymentRequest;
+import ubersystem.redis.RedisClient;
 import ubersystem.service.OrderService;
 import ubersystem.utils.JwtUtils;
 
@@ -23,6 +25,43 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    RedisClient redisClient;
+
+    @Override
+    public int create(Order order) {
+        int res = orderMapper.insert(order);
+        if(res<=0) {
+            log.info("create order failed");
+            throw new RuntimeException("create order failed");
+        }
+        //update cache
+        String key = "order:"+order.getId();
+        try {
+            redisClient.set(key,order, TimeLevel.HOUR.getValue());
+        } catch (Exception e) {
+            log.error("update cache failed");
+        }
+        return res;
+    }
+
+    @Override
+    public int update(Order order) {
+        int res = orderMapper.update(order);
+        if(res<=0) {
+            log.info("update order failed");
+            throw new RuntimeException("update order failed");
+        }
+        //update cache
+        String key = "order:"+order.getId();
+        try {
+            redisClient.set(key,order, TimeLevel.HOUR.getValue());
+        } catch (Exception e) {
+            log.error("update cache failed");
+        }
+        return res;
+    }
 
     @Override
     public String createBillInOrderByRideId(Long rid) {
@@ -47,6 +86,13 @@ public class OrderServiceImpl implements OrderService {
         if(order==null) {
             throw new RuntimeException("order not found");
         }
+        //update cache
+        String key = "order:"+order.getId();
+        try {
+            redisClient.set(key,order, TimeLevel.HOUR.getValue());
+        } catch (Exception e) {
+            log.error("update cache failed");
+        }
         return order;
     }
 
@@ -56,6 +102,13 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.getOrderByRideId(rid);
         if(order==null) {
             throw new RuntimeException("order not found");
+        }
+        //update cache
+        String key = "order:"+order.getId();
+        try {
+            redisClient.set(key,order, TimeLevel.HOUR.getValue());
+        } catch (Exception e) {
+            log.error("update cache failed");
         }
         return order;
     }
@@ -131,4 +184,8 @@ public class OrderServiceImpl implements OrderService {
         return "success";
     }
 
+    @Override
+    public Order getOrderByStatus(OrderStatus status,Long uid) {
+        return orderMapper.getOrderByStatus(status,uid);
+    }
 }

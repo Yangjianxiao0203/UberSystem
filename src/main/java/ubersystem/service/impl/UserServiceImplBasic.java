@@ -72,11 +72,9 @@ public class UserServiceImplBasic implements UserService {
         } catch (Exception e) {
             log.error("redis error when read: " + e.getMessage());
         }
-
         if(user != null) {
             return user;
         }
-
         // prevent cache penetration
         String lockKey = "lock:" + key;
         boolean isLock = redisClient.tryLock(lockKey);
@@ -90,7 +88,6 @@ public class UserServiceImplBasic implements UserService {
             }
             return getUserByUid(uid);
         }
-
         // not in cache, find it in database
         user = userMapper.getUserByUid(uid);
         //write to cache

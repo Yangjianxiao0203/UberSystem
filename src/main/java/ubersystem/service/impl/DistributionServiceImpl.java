@@ -26,13 +26,7 @@ import java.util.Objects;
 public class DistributionServiceImpl implements DistributionService {
 
     @Autowired
-    private RideMapper rideMapper;
-
-    @Autowired
-    private OrderMapper orderMapper;
-
-    @Autowired
-    OrderService orderService;
+    private OrderService orderService;
     @Autowired
     private TrackService trackService;
 
@@ -44,9 +38,9 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Override
     @Transactional
-    public synchronized String driverAcceptsOrder(DriverAcceptOrderRequest request, Long rideId) {
+    public String driverAcceptsOrder(DriverAcceptOrderRequest request, Long rideId) {
         log.info("driverUid: {} try to accept ride: {}", request.getDriverUid(), rideId);
-        Ride ride=rideMapper.getRideById(rideId);
+        Ride ride=rideService.getRideByRid(rideId);
 //        User user = userService.getUserByUid(request.getDriverUid());
         if(ride==null) {
             throw new RuntimeException("ride not found");
@@ -61,7 +55,7 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setDriverUid(request.getDriverUid());
         ride.setDriverAcceptTime(LocalDateTime.now());
 
-        int res = rideMapper.updateRide(ride);
+        int res = rideService.updateRide(ride);
         if(res<=0) {
             throw new RuntimeException("update ride failed");
         }
@@ -93,11 +87,17 @@ public class DistributionServiceImpl implements DistributionService {
         if(user==null) {
             throw new RuntimeException("user not found");
         }
+        //if user has an unpaid order, return the order id
+        Order unpaidOrder = orderService.getOrderByStatus(OrderStatus.Unpaid,user.getUid());
+        if(unpaidOrder!=null) {
+            log.info("user has an unpaid order: {}", unpaidOrder.getId());
+            throw new RuntimeException(unpaidOrder.getId().toString());
+        }
         // 创建订单
         Order order = new Order();
         order.setStatus(OrderStatus.Unpaid);
         order.setCreationTime(LocalDateTime.now());
-        orderMapper.insert(order);
+        orderService.create(order);
 
         // 创建行程Ride
         Ride ride = new Ride();
@@ -112,10 +112,11 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setMqttChannelName(getRegionTopic(request.getProvince(), request.getCity()));
         ride.setOrderId(order.getId());
         ride.setRideLength(request.getRideLength());
-        rideMapper.insert(ride);
+
+        rideService.create(ride);
         // 更新订单的rideId, 生成价格
         order.setRideId(ride.getId());
-        orderMapper.update(order);
+        orderService.update(order);
         orderService.createBillInOrderByRideId(ride.getId());
 
         //订阅ride MQTT频道
@@ -130,7 +131,7 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     @Transactional
     public List<Ride> getAcceptedRide(Long uid) {
-        List<Ride> rides = rideMapper.getRideByPassengerUidAndStatus(uid, RideStatus.DriverAccepted);
+        List<Ride> rides = rideService.getRideByPassengerUidAndStatus(uid, RideStatus.DriverAccepted);
         return rides;
     }
 
@@ -138,7 +139,7 @@ public class DistributionServiceImpl implements DistributionService {
     @Override
     @Transactional
     public RideAndNearbyVehicles getRideAndNearByVehicles(long rid, double lat, double lon) {
-        Ride ride = rideMapper.getRideById(rid);
+        Ride ride = rideService.getRideByRid(rid);
         if(ride==null) {
             throw new RuntimeException("ride not found");
         }
@@ -150,11 +151,11 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Override
     public String cancelRideAndOrder(Long rid, Long uid, boolean cancel) {
-        Order order = orderMapper.getOrderByRideId(rid);
+        Order order = orderService.getOrderByRid(rid);
         if(order==null) {
             throw new RuntimeException("order not found");
         }
-        Ride ride = rideMapper.getRideById(order.getRideId());
+        Ride ride = rideService.getRideByRid(order.getRideId());
         if(ride==null) {
             throw new RuntimeException("ride not found");
         }
@@ -171,9 +172,8 @@ public class DistributionServiceImpl implements DistributionService {
         ride.setCancellationTime(LocalDateTime.now());
 
         //update both in database
-        rideMapper.updateRide(ride);
-        orderMapper.update(order);
-
+        rideService.updateRide(ride);
+        orderService.update(order);
         return "cancel success";
     }
 

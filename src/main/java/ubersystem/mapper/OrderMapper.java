@@ -1,6 +1,7 @@
 package ubersystem.mapper;
 
 import org.apache.ibatis.annotations.*;
+import ubersystem.Enums.OrderStatus;
 import ubersystem.pojo.Order;
 
 @Mapper
@@ -18,5 +19,8 @@ public interface OrderMapper {
 
     @Select( "SELECT * FROM `order` WHERE id = #{id}")
     Order getOrderById(@Param("id") Long id);
+
+    @Select( "SELECT * FROM `order` WHERE status = #{status} and user_id = #{uid}")
+    Order getOrderByStatus(@Param("status") OrderStatus status, @Param("uid") Long uid);
 
 }

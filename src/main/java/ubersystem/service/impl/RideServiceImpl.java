@@ -6,6 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ubersystem.Enums.RideStatus;
 import ubersystem.Enums.TimeLevel;
 import ubersystem.mapper.RideMapper;
 import ubersystem.mqtt.Ride.RideClient;
@@ -30,43 +31,6 @@ public class RideServiceImpl extends MqttService implements RideService {
     @Autowired
     private RedisClient redisClient;
 
-    @Transactional
-    @Override
-    public Ride createRide(Ride ride) {
-        rideMapper.insert(ride);
-        //publish it to mqtt ride broker, with correct topic
-        MqttMessage message = getJson(ride);
-        try {
-            RideClient.getClient().publish(ride.getMqttChannelName(), message);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return ride;
-    }
-
-    @Override
-    public boolean cancelRide(Long rideId, LocalDateTime cancellationTime) {
-        int result = rideMapper.cancelRide(rideId, cancellationTime);
-        return result>0;
-    }
-
-    @Override
-    public boolean driverAcceptRide(Long rideId, Long driverUid, LocalDateTime driverAcceptTime) {
-        int result = rideMapper.driverAcceptRide(rideId, driverUid, driverAcceptTime);
-        return result>0;
-    }
-
-    @Override
-    public boolean pickUpPassenger(Long rideId, LocalDateTime pickUpTime) {
-        return rideMapper.pickUpPassenger(rideId, pickUpTime)>0;
-    }
-
-    @Override
-    public boolean arriveAtDestination(Long rideId, LocalDateTime arrivalTime) {
-        int rows = rideMapper.arriveAtDestination(rideId, arrivalTime);
-        return rows > 0;
-    }
-
     @Override
     public void listenToRide(String channel) {
         rideClient.subscribe(channel);
@@ -89,6 +53,7 @@ public class RideServiceImpl extends MqttService implements RideService {
     public List<Ride> getAllRides(Long uid) {
         List<Ride> rides = rideMapper.getRideByPassengerUid(uid);
         return rides;
+
     }
 
     /**
@@ -131,5 +96,47 @@ public class RideServiceImpl extends MqttService implements RideService {
             redisClient.unlock(lockKey);
         }
         return ride;
+    }
+
+    /**
+     * update ride
+     */
+    @Override
+    public int updateRide(Ride ride) {
+        int res = rideMapper.updateRide(ride);
+        if(res<=0) {
+            log.error("update ride failed");
+            return res;
+        }
+        //update cache
+        String key = "ride:" + ride.getId();
+        try {
+            redisClient.set(key, ride, TimeLevel.HOUR.getValue());
+        } catch (Exception e) {
+            log.error("redis error when write: " + e.getMessage());
+        }
+        return res;
+    }
+
+    @Override
+    public int create(Ride ride) {
+        int res = rideMapper.insert(ride);
+        if(res<=0) {
+            log.error("insert ride failed");
+            return res;
+        }
+        //update cache
+        String key = "ride:" + ride.getId();
+        try {
+            redisClient.set(key, ride, TimeLevel.HOUR.getValue());
+        } catch (Exception e) {
+            log.error("redis error when write: " + e.getMessage());
+        }
+        return res;
+    }
+
+    @Override
+    public List<Ride> getRideByPassengerUidAndStatus(Long uid, RideStatus rideStatus) {
+        return rideMapper.getRideByPassengerUidAndStatus(uid, rideStatus);
     }
 }
