@@ -13,6 +13,7 @@ import ubersystem.mapper.RideMapper;
 import ubersystem.pojo.*;
 import ubersystem.pojo.request.distribution.DriverAcceptOrderRequest;
 import ubersystem.pojo.request.distribution.OrderCreationRequest;
+import ubersystem.pojo.request.track.TrackMessage;
 import ubersystem.service.*;
 import ubersystem.utils.ChannelGenerator;
 
@@ -41,7 +42,7 @@ public class DistributionServiceImpl implements DistributionService {
     public String driverAcceptsOrder(DriverAcceptOrderRequest request, Long rideId) {
         log.info("driverUid: {} try to accept ride: {}", request.getDriverUid(), rideId);
         Ride ride=rideService.getRideByRid(rideId);
-//        User user = userService.getUserByUid(request.getDriverUid());
+
         if(ride==null) {
             throw new RuntimeException("ride not found");
         }
@@ -69,6 +70,9 @@ public class DistributionServiceImpl implements DistributionService {
         track.setTimeSequence(LocalDateTime.now());
         trackService.createTrack(track);
 
+        //publish ride in mqtt, let other drivers know this ride has been accepted
+        rideService.publishRide(ride);
+
         return channelName;
     }
 
@@ -88,10 +92,10 @@ public class DistributionServiceImpl implements DistributionService {
             throw new RuntimeException("user not found");
         }
         //if user has an unpaid order, return the order id
-        Order unpaidOrder = orderService.getOrderByStatus(OrderStatus.Unpaid,user.getUid());
-        if(unpaidOrder!=null) {
-            log.info("user has an unpaid order: {}", unpaidOrder.getId());
-            throw new RuntimeException(unpaidOrder.getId().toString());
+        List<Order> unpaidOrder = orderService.getOrdersByStatus(OrderStatus.Unpaid,user.getUid());
+        if(unpaidOrder.size()>0) {
+            log.info("user has an unpaid order: {}", unpaidOrder.get(0).getId());
+            throw new RuntimeException(unpaidOrder.get(0).getRideId().toString());
         }
         // 创建订单
         Order order = new Order();
@@ -151,6 +155,7 @@ public class DistributionServiceImpl implements DistributionService {
 
     @Override
     public String cancelRideAndOrder(Long rid, Long uid, boolean cancel) {
+        if(!cancel) {return "ok";}
         Order order = orderService.getOrderByRid(rid);
         if(order==null) {
             throw new RuntimeException("order not found");
@@ -164,16 +169,32 @@ public class DistributionServiceImpl implements DistributionService {
         if(!isDriver && !isPassenger) {
             throw new RuntimeException("user not match");
         }
+        if(isPassenger) {
+            // todo: order cancel and refunded operation
+            order.setStatus(OrderStatus.Refunded);
+            ride.setStatus(RideStatus.Cancelled);
+            ride.setCancellationTime(LocalDateTime.now());
+            //update both in database
+            rideService.updateRide(ride);
+            orderService.update(order);
+            //get track and publish it to driver side
+            Track track = trackService.getTrackByRid(rid);
+            TrackMessage trackMessage = new TrackMessage();
+            trackMessage.setRid(rid);
+            trackService.publish(trackMessage, track.getMqttChannelName());
 
-        // todo: order cancel and refunded operation
-        order.setStatus(OrderStatus.RefundProcessing);
-
-        ride.setStatus(RideStatus.Cancelled);
-        ride.setCancellationTime(LocalDateTime.now());
-
-        //update both in database
-        rideService.updateRide(ride);
-        orderService.update(order);
+        } else {
+            ride.setStatus(RideStatus.Created);
+            ride.setDriverUid(null);
+            ride.setDriverAcceptTime(null);
+            rideService.updateRide(ride);
+            rideService.publishRide(ride);
+            //get track and publish it to driver side
+            Track track = trackService.getTrackByRid(rid);
+            TrackMessage trackMessage = new TrackMessage();
+            trackMessage.setRid(rid);
+            trackService.publish(trackMessage, track.getMqttChannelName());
+        }
         return "cancel success";
     }
 

@@ -15,5 +15,7 @@ public interface TrackMapper {
     @Update("UPDATE track SET ride_id = #{track.rideId}, time_sequence = #{track.timeSequence}, mqtt_channel_name = #{track.mqttChannelName}, coordinate = #{track.coordinate}, speed_track = #{track.speedTrack}, altitude = #{track.altitude} WHERE id = #{track.id}")
     int updateTrack(@Param("track") Track track);
 
+    @Delete("DELETE FROM track WHERE ride_id = #{rideId}")
+    int deleteTrackByRid(@Param("rideId") Long rideId);
 }
 

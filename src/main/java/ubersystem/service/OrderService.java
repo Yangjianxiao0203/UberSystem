@@ -6,6 +6,8 @@ import ubersystem.Enums.OrderStatus;
 import ubersystem.pojo.Order;
 import ubersystem.pojo.request.order.PaymentRequest;
 
+import java.util.List;
+
 @Service
 public interface OrderService {
     @Transactional
@@ -20,7 +22,7 @@ public interface OrderService {
     Order getOrderByRid(Long rid);
 
     @Transactional
-    Order getOrderByStatus(OrderStatus status,Long uid);
+    List<Order> getOrdersByStatus(OrderStatus status, Long uid);
     @Transactional
     String createPaymentRequest(PaymentRequest request,Long oid);
     @Transactional

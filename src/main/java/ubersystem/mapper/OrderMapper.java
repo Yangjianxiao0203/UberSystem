@@ -4,6 +4,8 @@ import org.apache.ibatis.annotations.*;
 import ubersystem.Enums.OrderStatus;
 import ubersystem.pojo.Order;
 
+import java.util.List;
+
 @Mapper
 public interface OrderMapper {
     @Insert("INSERT INTO `order`(ride_id, creation_time, total_cost, base_cost, ride_and_fuel_cost, time_cost, special_location_servicecost, dynamic_cost, status, payment_platform, payment_platform_serial_number, payment_result_from_platform) " +
@@ -20,7 +22,7 @@ public interface OrderMapper {
     @Select( "SELECT * FROM `order` WHERE id = #{id}")
     Order getOrderById(@Param("id") Long id);
 
-    @Select( "SELECT * FROM `order` WHERE status = #{status} and user_id = #{uid}")
-    Order getOrderByStatus(@Param("status") OrderStatus status, @Param("uid") Long uid);
+    @Select("SELECT `order`.* FROM `order` INNER JOIN ride ON `order`.ride_id = ride.id WHERE (ride.passenger_uid = #{userId}) AND `order`.status = #{status}")
+    List<Order> getOrdersByStatus(@Param("userId") Long userId, @Param("status") OrderStatus status);
 
 }

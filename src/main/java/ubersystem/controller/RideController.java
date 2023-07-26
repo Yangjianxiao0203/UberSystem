@@ -65,7 +65,7 @@ public class RideController {
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), id);
         } catch (Exception e) {
             // return order id
-            return new Result<>(ResponseStatus.CREATE_RIDE_ERROR.getStatus(), ResponseStatus.CREATE_RIDE_ERROR.getMessage(), e.getMessage());
+            return new Result<>(ResponseStatus.CREATE_RIDE_ERROR.getCode(), ResponseStatus.CREATE_RIDE_ERROR.getMessage(), e.getMessage());
         }
     }
 

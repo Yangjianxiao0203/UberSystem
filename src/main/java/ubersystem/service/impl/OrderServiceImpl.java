@@ -13,9 +13,8 @@ import ubersystem.pojo.User;
 import ubersystem.pojo.request.order.PaymentRequest;
 import ubersystem.redis.RedisClient;
 import ubersystem.service.OrderService;
-import ubersystem.utils.JwtUtils;
 
-import java.util.Objects;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -185,7 +184,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getOrderByStatus(OrderStatus status,Long uid) {
-        return orderMapper.getOrderByStatus(status,uid);
+    public List<Order> getOrdersByStatus(OrderStatus status, Long uid) {
+        return orderMapper.getOrdersByStatus(uid,status);
     }
 }
