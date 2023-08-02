@@ -22,8 +22,6 @@ public class UserServiceImplBasic implements UserService {
     @Autowired
     private UserMapper userMapper;
 
-//    @Autowired
-//    private RideMapper rideMapper;
     @Autowired
     private RideService rideService;
 

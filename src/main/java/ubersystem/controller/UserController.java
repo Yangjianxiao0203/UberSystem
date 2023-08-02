@@ -2,10 +2,12 @@ package ubersystem.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ubersystem.Enums.LogLevel;
 import ubersystem.Result.ResponseStatus;
 import ubersystem.Result.Result;
 import ubersystem.pojo.User;
 import ubersystem.service.AuthService;
+import ubersystem.service.LogService;
 import ubersystem.service.UserService;
 import ubersystem.utils.JwtUtils;
 
@@ -19,6 +21,9 @@ public class UserController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private LogService logService;
 
     @PostMapping("/user")
     public Result<String> registerUser(@RequestBody User user) {

@@ -25,7 +25,6 @@ public class OrderController {
      */
     @PostMapping("")
     public Result<String> createBillInOrderByRideId(@RequestBody PostToPriceRequest request) {
-        log.info("createBillInOrderByRideId: {}", request);
         try{
             String oid = orderService.createBillInOrderByRideId(request.getRid());
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), oid);
@@ -39,7 +38,6 @@ public class OrderController {
      */
     @GetMapping("/{oid}")
     public Result<Order> getOrderByOid(@PathVariable("oid") Long oid) {
-        log.info("getOrderByOid: {}", oid);
         try{
             Order order = orderService.getOrderByOid(oid);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), order);
@@ -56,7 +54,6 @@ public class OrderController {
     @PutMapping("/{oid}")
     public Result<String> paymentRequest(@RequestBody PaymentRequest request,@PathVariable("oid") Long oid) {
         if(request.getPlatformSerialNumber()==null) {
-            log.info("createPaymentRequest: {}", request);
             try {
                 String paymentRequest = orderService.createPaymentRequest(request, oid);
                 return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), paymentRequest);
@@ -64,7 +61,6 @@ public class OrderController {
                 return new Result<>(ResponseStatus.PAYMENT_ERROR.getStatus(), ResponseStatus.PAYMENT_ERROR.getMessage(), null);
             }
         } else {
-            log.info("checkPaymentRequest: {}", request);
             try {
                 String res = orderService.checkPaymentRequest(request, oid);
                 return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), res);
@@ -79,7 +75,6 @@ public class OrderController {
      */
     @GetMapping("")
     public Result<Order> getOrderByRid(@RequestParam("rid") Long rid) {
-        log.info("getOrderByRid: {}", rid);
         try{
             Order order = orderService.getOrderByRid(rid);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), order);

@@ -29,7 +29,6 @@ public class RideController {
 
     @PutMapping("/{rid}")
     public Result<String> driverAcceptsOrder(@RequestBody DriverAcceptOrderRequest request, @PathVariable("rid") Long rid) {
-        log.info("driverAcceptsOrder {} by driver {}",rid, request.getDriverUid());
         try{
             String channelName = distributionService.driverAcceptsOrder(request,rid);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(),ResponseStatus.SUCCESS.getMessage(), channelName);
@@ -44,7 +43,6 @@ public class RideController {
      */
     @GetMapping("/track/{rid}")
     public Result<String> getTrackIdByRid(@PathVariable("rid") Long rid) {
-        log.info("getTrackIdByRid {}",rid);
         try{
             String channelName = distributionService.getTrackIdByRid(rid);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(),ResponseStatus.SUCCESS.getMessage(), channelName);
@@ -59,7 +57,6 @@ public class RideController {
      */
     @PostMapping("")
     public Result<String> createRideAndOrder(@RequestBody OrderCreationRequest request) {
-        log.info("createRideAndOrder by user: {}",request.getUid());
         try {
             String id = distributionService.createOrderAndRide(request);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), id);
@@ -73,7 +70,6 @@ public class RideController {
     public Result<String> cancelRideAndOrder(@PathVariable("rid") Long rid, @RequestBody CancelRequest request) {
         Long uid = request.getUid();
         boolean cancel = request.isCancel();
-        log.info("cancelRideAndOrder by user: {}",uid);
         try {
             String id = distributionService.cancelRideAndOrder(rid, uid, cancel);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), null);
@@ -84,7 +80,6 @@ public class RideController {
 
     @GetMapping("/{rid}")
     public Result<RideAndNearbyVehicles> getRideAndNearByVehicles(@RequestParam("lat") double lat, @RequestParam("long") double lon,@PathVariable("rid") Long rid) {
-        log.info("getRideAndNearByVehicles by lat: {}, long: {}", lat, lon);
         try {
             RideAndNearbyVehicles rv = distributionService.getRideAndNearByVehicles(rid,lat, lon);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rv);
@@ -96,7 +91,6 @@ public class RideController {
     @GetMapping("/accepted")
     public Result<List<Ride>> getAcceptedRide(@RequestHeader("x-auth-token") String token) {
         Long uid = JwtUtils.getUid(token);
-        log.info("getAcceptedRide by uid:{}", uid);
         try {
             List<Ride> rides = distributionService.getAcceptedRide(uid);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);
@@ -110,7 +104,6 @@ public class RideController {
      */
     @GetMapping("")
     public Result<List<Ride>> getAllRides(@RequestParam("uid") Long uid) {
-        log.info("getAllRides by uid:{}", uid);
         try {
             List<Ride> rides = rideService.getAllRides(uid);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);

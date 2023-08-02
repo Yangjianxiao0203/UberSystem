@@ -1,21 +1,26 @@
 package ubersystem.logger;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 import ubersystem.Enums.LogLevel;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Component
 public class Log {
-    private Long id;
-    private LocalDateTime timestamp;
-    private String sourceModule;
-//    @Enumerated(EnumType.STRING)
-    private LogLevel logLevel;
-    private String logContent;
+    Long id;
+    LocalDateTime timestamp;
+    String sourceModule;
+    LogLevel logLevel;
+    String logContent;
 
+    @Override
+    public String toString() {
+        return "log level: " + logLevel + " | time:  " + timestamp + " | source: " + sourceModule + " | content: " + logContent + "\n";
+    }
 }
-
