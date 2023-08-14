@@ -121,7 +121,7 @@ public class DistributionServiceImpl implements DistributionService {
         // 更新订单的rideId, 生成价格
         order.setRideId(ride.getId());
         orderService.update(order);
-        orderService.createBillInOrderByRideId(ride.getId());
+        orderService.createBillInOrderByRide(ride, request.getRideLength());
 
         //订阅ride MQTT频道
         rideService.listenToRide(ride.getMqttChannelName());

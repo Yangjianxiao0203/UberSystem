@@ -13,6 +13,7 @@ public class OrderCreationRequest {
     private String desLat;
     private String desResolvedAddress;
     private Double rideLength;
+    private Double rideTime;
     private RideType type;
     private String province;
     private String city;

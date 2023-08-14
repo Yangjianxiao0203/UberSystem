@@ -5,14 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ubersystem.Enums.OrderStatus;
+import ubersystem.Enums.RideStatus;
 import ubersystem.Enums.TimeLevel;
 import ubersystem.mapper.OrderMapper;
 import ubersystem.mapper.UserMapper;
 import ubersystem.pojo.Order;
+import ubersystem.pojo.Ride;
 import ubersystem.pojo.User;
 import ubersystem.pojo.request.order.PaymentRequest;
 import ubersystem.redis.RedisClient;
 import ubersystem.service.OrderService;
+import ubersystem.service.RideService;
 
 import java.util.List;
 
@@ -24,6 +27,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    RideService rideService;
 
     @Autowired
     RedisClient redisClient;
@@ -76,6 +82,32 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("update order failed");
         }
 
+        return order.getId().toString();
+    }
+
+    /**
+     * create bill in order by ride
+     * @param ride
+     */
+    @Override
+    public String createBillInOrderByRide(Ride ride,Double estimateTime) {
+        Order order = orderMapper.getOrderByRideId(ride.getId());
+        if (order == null) {
+            throw new RuntimeException("order not found");
+        }
+        // base cost: 12
+        // distance cost: 2.5 per km
+        // time cost: 0.75 per min
+        // special cost:0
+        // dynamic cost: 0.05 * (n ** 0.5) * p , p=100, n = times passenger has taken uber
+        order.setBaseCost(12.0);
+        order.setRideAndFuelCost(2.5 * ride.getRideLength()/1000);
+        order.setTimeCost(0.75 * estimateTime/60);
+        order.setSpecialLocationServiceCost(0.0);
+        List<Ride> rides = rideService.getRideByPassengerUidAndStatus(ride.getPassengerUid(), RideStatus.Arrived);
+        order.setDynamicCost(0.05 * Math.sqrt(rides.size()) * 100);
+        order.setTotalCost(order.getBaseCost() + order.getRideAndFuelCost() + order.getTimeCost() + order.getSpecialLocationServiceCost() + order.getDynamicCost());
+        orderMapper.update(order);
         return order.getId().toString();
     }
 

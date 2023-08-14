@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ubersystem.Enums.OrderStatus;
 import ubersystem.pojo.Order;
+import ubersystem.pojo.Ride;
 import ubersystem.pojo.request.order.PaymentRequest;
 
 import java.util.List;
@@ -16,6 +17,8 @@ public interface OrderService {
     int update(Order order);
     @Transactional
     String createBillInOrderByRideId(Long rid);
+    @Transactional
+    String createBillInOrderByRide(Ride ride,Double estimateTime);
     @Transactional
     Order getOrderByOid(Long oid);
     @Transactional

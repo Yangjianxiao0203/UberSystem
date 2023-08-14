@@ -3,6 +3,7 @@ package ubersystem.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ubersystem.Enums.RideStatus;
 import ubersystem.Result.ResponseStatus;
 import ubersystem.pojo.*;
 import ubersystem.Result.Result;
@@ -93,6 +94,17 @@ public class RideController {
         Long uid = JwtUtils.getUid(token);
         try {
             List<Ride> rides = distributionService.getAcceptedRide(uid);
+            return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);
+        } catch (Exception e) {
+            return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
+        }
+    }
+
+    @GetMapping("/history")
+    public Result<List<Ride>> getHistoryRide(@RequestHeader("x-auth-token") String token, @RequestParam("rideStatus") RideStatus rideStatus) {
+        Long uid = JwtUtils.getUid(token);
+        try {
+            List<Ride> rides = rideService.getRideByPassengerUidAndStatus(uid, rideStatus);
             return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);
         } catch (Exception e) {
             return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
