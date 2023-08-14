@@ -139,6 +139,11 @@ public class DistributionServiceImpl implements DistributionService {
         return rides;
     }
 
+    @Override
+    public List<Ride> getCreatedRidesByChannelName(String channelName) {
+        List<Ride> rides = rideService.getRidesByChannelNameAndStatus(channelName, RideStatus.Created);
+        return rides;
+    }
 
     @Override
     @Transactional

@@ -18,15 +18,15 @@ public class LogAspect {
     @Autowired
     private LogService logService;
 
-    @Before("execution(* ubersystem.controller.*.*(..))")
-    public void logControllerBefore(JoinPoint joinPoint) {
-        Signature signature = joinPoint.getSignature();
-        String name = signature.getName(); // get method name in the controller
-        String className = signature.getDeclaringTypeName(); // get class name
-        //get last layer of class name
-        className = className.substring(className.lastIndexOf(".") + 1);
-        logService.log(className, LogLevel.INFO, name);
-    }
+//    @Before("execution(* ubersystem.controller.*.*(..))")
+//    public void logControllerBefore(JoinPoint joinPoint) {
+//        Signature signature = joinPoint.getSignature();
+//        String name = signature.getName(); // get method name in the controller
+//        String className = signature.getDeclaringTypeName(); // get class name
+//        //get last layer of class name
+//        className = className.substring(className.lastIndexOf(".") + 1);
+//        logService.log(className, LogLevel.INFO, name);
+//    }
 
     @AfterReturning(value = "execution(* ubersystem.controller.*.*(..))", returning = "result")
     public void logControllerAfterReturning(JoinPoint joinPoint, Object result) {

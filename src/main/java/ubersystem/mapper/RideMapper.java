@@ -38,6 +38,9 @@ public interface RideMapper {
     @Select("SELECT * FROM ride WHERE passenger_uid = #{passengerUid} AND status = #{rideStatus}")
     List<Ride> getRideByPassengerUidAndStatus(@Param("passengerUid") Long passengerUid, @Param("rideStatus") RideStatus rideStatus);
 
+    @Select("SELECT * FROM ride WHERE mqtt_channel_name = #{channelName} AND status = #{rideStatus}")
+    List<Ride> getRidesByChannelNameAndStatus(@Param("channelName") String channelName, @Param("rideStatus") RideStatus rideStatus);
+
     @Update("UPDATE ride SET "
             + "creation_time = #{ride.creationTime}, "
             + "passenger_uid = #{ride.passengerUid}, "

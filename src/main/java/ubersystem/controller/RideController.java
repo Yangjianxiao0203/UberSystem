@@ -112,6 +112,19 @@ public class RideController {
     }
 
     /**
+     * get rides number by channelName
+     */
+    @GetMapping("/channel/{channelName}")
+    public Result<List<Ride>> getRidesByChannelName(@RequestHeader("x-auth-token") String token,@PathVariable String channelName) {
+        try {
+            List<Ride> rides = rideService.getRidesByChannelNameAndStatus(channelName,RideStatus.Created);
+            return new Result<>(ResponseStatus.SUCCESS.getStatus(), ResponseStatus.SUCCESS.getMessage(), rides);
+        } catch (Exception e) {
+            return new Result<>(ResponseStatus.FAILURE.getStatus(), ResponseStatus.FAILURE.getMessage(), null);
+        }
+    }
+
+    /**
      * get all rides by uid
      */
     @GetMapping("")

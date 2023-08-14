@@ -139,4 +139,9 @@ public class RideServiceImpl extends MqttService implements RideService {
     public List<Ride> getRideByPassengerUidAndStatus(Long uid, RideStatus rideStatus) {
         return rideMapper.getRideByPassengerUidAndStatus(uid, rideStatus);
     }
+
+    @Override
+    public List<Ride> getRidesByChannelNameAndStatus(String channelName, RideStatus rideStatus) {
+        return rideMapper.getRidesByChannelNameAndStatus(channelName, rideStatus);
+    }
 }

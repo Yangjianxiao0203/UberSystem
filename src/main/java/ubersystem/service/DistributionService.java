@@ -26,4 +26,7 @@ public interface DistributionService {
 
     @Transactional
     public String getTrackIdByRid(Long rid);
+
+    @Transactional
+    public List<Ride> getCreatedRidesByChannelName(String channelName);
 }

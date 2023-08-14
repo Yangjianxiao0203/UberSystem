@@ -32,4 +32,7 @@ public interface RideService {
 
     @Transactional
     public List<Ride> getRideByPassengerUidAndStatus(Long uid, RideStatus rideStatus);
+
+    @Transactional
+    public List<Ride> getRidesByChannelNameAndStatus(String channelName,RideStatus rideStatus);
 }
