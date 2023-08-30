@@ -1,0 +1,80 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:8.0
+    environment:
+        MySQL_USER: root
+        MYSQL_ROOT_PASSWORD: distinctive0930
+        MYSQL_DATABASE: UberSystem
+    volumes:
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    command:
+      - "--init-file"
+      - "/docker-entrypoint-initdb.d/schema.sql"
+    networks:
+        - uber-network
+
+  uber-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+      - mqtt
+    ports:
+        - "8000:8000"
+    environment:
+        - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/UberSystem?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&allowMultiQueries=true
+        - SPRING_DATASOURCE_USERNAME=root
+        - SPRING_DATASOURCE_PASSWORD=distinctive0930
+        - SPRING_RABBITMQ_HOST=rabbitmq
+        - SPRING_RABBITMQ_PORT=5672
+        - SPRING_RABBITMQ_USERNAME=uberSystem
+        - SPRING_RABBITMQ_PASSWORD=123456
+        - SPRING_DATA_REDIS_HOST=redis
+        - SPRING_DATA_REDIS_PORT=6379
+        - SPRING_MQTT_HOST= tcp://mqtt:1883
+    networks:
+        - uber-network
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+        - uber-network
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+        - uber-network
+    environment:
+        - RABBITMQ_DEFAULT_USER=uberSystem
+        - RABBITMQ_DEFAULT_PASS=123456
+
+  mqtt:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+    networks:
+        - uber-network
+    environment:
+        - MQTT_USER=guest
+        - MQTT_PASSWORD=guest
+    volumes:
+      - ./mqtt/conf:/mosquitto/conf
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+
+networks:
+    uber-network:
+        driver: bridge

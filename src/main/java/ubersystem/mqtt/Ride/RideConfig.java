@@ -3,6 +3,7 @@ package ubersystem.mqtt.Ride;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -15,7 +16,9 @@ import java.util.List;
 @Data
 @Slf4j
 public class RideConfig {
-    private String host="ws://localhost:8083";
+    @Value("${SPRING_MQTT_HOST:ws://localhost:8083}")
+    private String host;
+
     private String clientId="ride-backend";
     private String userName="Ride";
     private String password="distinctive0930";
@@ -25,14 +28,14 @@ public class RideConfig {
     private List<String> channels;
     private boolean cleanSession=false;
 
-    @PostConstruct
-    public void setChannel() {
-        if(channels == null) {
-            channels = setChannelsByTxT("src/main/java/ubersystem/mqtt/Ride/StateAndCityInAmerican.txt");
-        }
-        log.info("MQTT configuration completed: {}", this);
-        log.info("MQTT channels completed with size: {}", channels.size());
-    }
+//    @PostConstruct
+//    public void setChannel() {
+//        if(channels == null) {
+//            channels = setChannelsByTxT("src/main/java/ubersystem/mqtt/Ride/StateAndCityInAmerican.txt");
+//        }
+//        log.info("MQTT configuration completed: {}", this);
+//        log.info("MQTT channels completed with size: {}", channels.size());
+//    }
 
     public List<String> setChannelsByTxT(String file){
         List<String> channels = new ArrayList<>();
