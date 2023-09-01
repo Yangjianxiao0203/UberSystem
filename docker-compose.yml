@@ -39,7 +39,7 @@ services:
         - SPRING_RABBITMQ_PASSWORD=123456
         - SPRING_DATA_REDIS_HOST=redis
         - SPRING_DATA_REDIS_PORT=6379
-        - SPRING_MQTT_HOST= tcp://mqtt:1883
+        - SPRING_MQTT_HOST=tcp://mqtt:1883
     networks:
         - uber-network
 
@@ -71,7 +71,7 @@ services:
         - MQTT_USER=guest
         - MQTT_PASSWORD=guest
     volumes:
-      - ./mqtt/conf:/mosquitto/conf
+      - ./mqtt/conf/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./mqtt/data:/mosquitto/data
       - ./mqtt/log:/mosquitto/log
 
